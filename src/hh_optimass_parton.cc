@@ -29,8 +29,8 @@ int main(int argc, char *argv[]) {
     }
 
     lhef::Event lhe = lhef::parseEvent(&fin);
-    unsigned long neve = 0;
-    for (unsigned long ieve = 0; !lhe.empty();
+    unsigned int neve = 0;
+    for (unsigned int ieve = 0; !lhe.empty();
          lhe = lhef::parseEvent(&fin), ++ieve, neve = ieve) {
         lhef::Particles finalStates = lhef::finalStates(lhe);
         message(appname, "final states in event (" + to_string(ieve + 1) + ")",
