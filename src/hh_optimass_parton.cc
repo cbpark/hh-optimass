@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <string>
 #include "clhef/lhef.h"
 #include "user_interface.h"
@@ -21,21 +22,23 @@ int main(int argc, char *argv[]) {
     if (argc != 2) { return howToUse(appname, "<input>"); }
     const auto to_out = &cout;  // information will be displayed in screen.
 
-    std::ifstream fin{argv[1]};
-    if (fin.fail()) {
+    auto fin = std::make_shared<std::ifstream>(argv[1]);
+    if (fin->fail()) {
         return failToRead(appname, argv[1]);
     } else {
         message(appname, "reading `" + std::string(argv[1]) + "' ...", to_out);
     }
 
-    lhef::Event lhe = lhef::parseEvent(&fin);
-    unsigned int neve = 0;
-    for (unsigned int ieve = 0; !lhe.empty();
-         lhe = lhef::parseEvent(&fin), ++ieve, neve = ieve) {
-        lhef::Particles finalStates = lhef::finalStates(lhe);
-        message(appname, "final states in event (" + to_string(ieve + 1) + ")",
+    auto event = lhef::parseOrFail(fin);
+    int neve = 0;
+    while (event.first) {
+        const lhef::Particles final_states = lhef::finalStates(event.second);
+        message(appname, "final states in event (" + to_string(neve + 1) + ")",
                 to_out);
-        cout << lhef::show(finalStates) << '\n';
+        cout << lhef::show(final_states) << '\n';
+
+        ++neve;
+        event = lhef::parseOrFail(fin);
     }
     message(appname, to_string(neve) + " events parsed.", to_out);
 }
