@@ -8,9 +8,9 @@
 
 #include <fstream>
 #include <iostream>
-#include <memory>
 #include <string>
 #include "clhef/lhef.h"
+#include "final_states.h"
 #include "user_interface.h"
 
 using std::cout;
@@ -22,23 +22,18 @@ int main(int argc, char *argv[]) {
     if (argc != 2) { return howToUse(appname, "<input>"); }
     const auto to_out = &cout;  // information will be displayed in screen.
 
-    auto fin = std::make_shared<std::ifstream>(argv[1]);
-    if (fin->fail()) {
+    std::ifstream fin(argv[1]);
+    if (fin.fail()) {
         return failToRead(appname, argv[1]);
     } else {
         message(appname, "reading `" + std::string(argv[1]) + "' ...", to_out);
     }
 
-    auto event = lhef::parseOrFail(fin);
-    int neve = 0;
-    while (event.first) {
-        const lhef::Particles final_states = lhef::finalStates(event.second);
-        message(appname, "final states in event (" + to_string(neve + 1) + ")",
-                to_out);
-        cout << lhef::show(final_states) << '\n';
-
-        ++neve;
-        event = lhef::parseOrFail(fin);
+    auto event{lhef::parseEvent(&fin)};
+    for (; !event.done(); event = lhef::parseEvent(&fin)) {
+        hhom::PartonLevel ps{event};
+        cout << "bquarks:\n" << lhef::show(ps.bquarks()) << '\n';
+        cout << "leptons:\n" << lhef::show(ps.leptons()) << '\n';
+        cout << "missing:\n" << lhef::show(ps.missing()) << '\n';
     }
-    message(appname, to_string(neve) + " events parsed.", to_out);
 }
