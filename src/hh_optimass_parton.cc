@@ -32,8 +32,15 @@ int main(int argc, char *argv[]) {
     auto event{lhef::parseEvent(&fin)};
     for (; !event.done(); event = lhef::parseEvent(&fin)) {
         hhom::PartonLevel ps{event};
-        cout << "bquarks:\n" << lhef::show(ps.bquarks()) << '\n';
-        cout << "leptons:\n" << lhef::show(ps.leptons()) << '\n';
+        if (!ps.have_bl_pairs()) { continue; }
+        const auto bl_pairs{ps.bl_pairs()};
+        cout << "b-l pairs:\n"
+             << show(bl_pairs.first) << '\n'
+             << show(bl_pairs.second) << '\n';
+        const auto bl_wrong_pairs{ps.bl_wrong_pairs()};
+        cout << "b-l pairs (wrong):\n"
+             << show(bl_wrong_pairs.first) << '\n'
+             << show(bl_wrong_pairs.second) << '\n';
         cout << "missing:\n" << lhef::show(ps.missing()) << '\n';
     }
 }
