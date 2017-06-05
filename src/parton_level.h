@@ -40,6 +40,12 @@ using BLPairs = std::pair<BLSystem, BLSystem>;
 class PartonLevel {
 private:
     lhef::Particles fstates_;
+
+    /*
+     * The b and lepton pair does not make sense since they have different
+     * parents in the Higgs pair processes. This is to use for the top pair
+     * process, which is the most dominant background.
+     */
     BLPairs bl_pairs_;
 
 public:

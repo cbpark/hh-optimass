@@ -31,6 +31,8 @@ lhef::Particles PartonLevel::leptons() const {
 
 bool valid(const lhef::Particles &ps) {
     if (ps.size() != 2) { return false; }
+    // Since the total system is neutral, we must have a particle and an
+    // anti-particle.
     if (ps[0].pid() * ps[1].pid() >= 0) { return false; }
     return true;
 }
@@ -41,20 +43,12 @@ BLPairs PartonLevel::pairing() {
     BLSystem bl1, bl2;
     if (!valid(bs) || !valid(ls)) { return std::make_pair(bl1, bl2); }
 
-    for (const auto &b : bs) {
-        if (b.pid() > 0) {
-            bl1.add_bquark(b);
-        } else {
-            bl2.add_bquark(b);
-        }
-    }
-    for (const auto &l : ls) {
-        if (l.pid() > 0) {
-            bl2.add_lepton(l);
-        } else {
-            bl1.add_lepton(l);
-        }
-    }
+    lhef::transformParticles(bs, [&bl1, &bl2](const lhef::Particle &b) {
+        b.pid() > 0 ? bl1.add_bquark(b) : bl2.add_bquark(b);
+    });
+    lhef::transformParticles(bs, [&bl1, &bl2](const lhef::Particle &l) {
+        l.pid() > 0 ? bl2.add_lepton(l) : bl1.add_lepton(l);
+    });
 
     bl1.set_filled(true);
     bl2.set_filled(true);
