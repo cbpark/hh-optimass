@@ -21,6 +21,17 @@ lhef::Particle PartonLevel::missing() const {
     return lhef::sum(neus);
 }
 
+lhef::Particle PartonLevel::utm() const {
+    lhef::ParticleID b_l_neu;
+    b_l_neu.insert(b_l_neu.end(), lhef::Bottom.cbegin(), lhef::Bottom.cend());
+    b_l_neu.insert(b_l_neu.end(), lhef::LeptonIso.cbegin(),
+                   lhef::LeptonIso.cend());
+    b_l_neu.insert(b_l_neu.end(), lhef::Neutrino.cbegin(),
+                   lhef::Neutrino.cend());
+    lhef::Particles extra = lhef::excludeByID(b_l_neu, fstates_);
+    return lhef::sum(extra);
+}
+
 lhef::Particles PartonLevel::bquarks() const {
     return lhef::selectByID(lhef::Bottom, fstates_);
 }

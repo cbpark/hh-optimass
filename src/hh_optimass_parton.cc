@@ -42,5 +42,6 @@ int main(int argc, char *argv[]) {
              << show(bl_wrong_pairs.first) << '\n'
              << show(bl_wrong_pairs.second) << '\n';
         cout << "missing:\n" << lhef::show(ps.missing()) << '\n';
+        cout << "utm:\n" << lhef::show(ps.utm()) << '\n';
     }
 }

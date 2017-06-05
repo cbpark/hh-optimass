@@ -47,6 +47,7 @@ private:
      * process, which is the most dominant background.
      */
     BLPairs bl_pairs_;
+    lhef::Particle utm_;
 
 public:
     PartonLevel() = delete;
@@ -60,10 +61,10 @@ public:
     BLPairs bl_wrong_pairs() const;
 
     lhef::Particle missing() const;
+    lhef::Particle utm() const;
 
 private:
     std::pair<BLSystem, BLSystem> pairing();
-
     lhef::Particles bquarks() const;
     lhef::Particles leptons() const;
 };
