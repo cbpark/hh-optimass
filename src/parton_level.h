@@ -47,7 +47,6 @@ private:
      * process, which is the most dominant background.
      */
     BLPairs bl_pairs_;
-    lhef::Particle utm_;
 
 public:
     PartonLevel() = delete;
