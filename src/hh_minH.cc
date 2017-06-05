@@ -1,4 +1,5 @@
 #include "hh_minH.h"
+#include <cmath>
 #include <string>
 #include <vector>
 #include "Minuit2/CombinedMinimizer.h"
@@ -46,8 +47,7 @@ void hh_minH::InitContainersProlog() {
     vector<string> vec_optimize{"v1", "v2"};
     process_tree_.SetPtlOptimize(vec_optimize);
 
-    vector<string> vec_buffer;
-    vec_buffer = {"H"};
+    vector<string> vec_buffer{"H"};
     process_tree_.AddInvisibleSubsystem(vec_buffer);
 
     // Minuit Parameters
@@ -66,8 +66,7 @@ void hh_minH::InitContainersProlog() {
     double MScale_Parent = 100.;
     double MScale_Rel = 0.;
     double Cmax[2] = {0.001 * MScale_Parent, 0.001 * MScale_Rel};
-    alm_controller_.SetALMControlParam(
-        "eta_s", sqrt(Cmax[0] * Cmax[0] + Cmax[1] * Cmax[1]));
+    alm_controller_.SetALMControlParam("eta_s", std::hypot(Cmax[0], Cmax[1]));
 
     // set number of constraints
     alm_controller_.SetNumberConstraints(3);
