@@ -16,13 +16,13 @@ MKDIR    := mkdir -p
 RM       := rm -f
 
 # CLHEF (https://github.com/cbpark/CLHEF)
-CLHEF    := /usr/local
+CLHEF    ?= /usr/local
 CXXFLAGS += -I$(CLHEF)/include
 LDFLAGS  += -Wl,-rpath,$(CLHEF)/lib
 LIBS     += -L$(CLHEF)/lib -lCLHEF
 
 # OptiMass/alm_base
-OPTIMASS := /usr/local
+OPTIMASS ?= /usr/local
 CXXFLAGS += -I$(OPTIMASS)/include
 LDFLAGS  += -Wl,-rpath,$(OPTIMASS)/lib
 LIBS     += -L$(OPTIMASS)/lib -lOptiMass
