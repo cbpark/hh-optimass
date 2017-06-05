@@ -53,7 +53,7 @@ public:
     explicit PartonLevel(const lhef::Event &e)
         : fstates_{lhef::finalStates(e)}, bl_pairs_{pairing()} {}
 
-    bool have_bl_pairs() const {
+    bool has_bl_pairs() const {
         return bl_pairs_.first.is_filled() && bl_pairs_.second.is_filled();
     }
     BLPairs bl_pairs() const { return bl_pairs_; }

@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     auto event{lhef::parseEvent(&fin)};
     for (; !event.done(); event = lhef::parseEvent(&fin)) {
         hhom::PartonLevel ps{event};
-        if (!ps.have_bl_pairs()) { continue; }
+        if (!ps.has_bl_pairs()) { continue; }
         const auto bl_pairs{ps.bl_pairs()};
         cout << "b-l pairs:\n"
              << show(bl_pairs.first) << '\n'
