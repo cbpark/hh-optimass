@@ -21,6 +21,18 @@ CXXFLAGS += -I$(CLHEF)/include
 LDFLAGS  += -Wl,-rpath,$(CLHEF)/lib
 LIBS     += -L$(CLHEF)/lib -lCLHEF
 
+# OptiMass/alm_base
+OPTIMASS := /usr/local
+CXXFLAGS += -I$(OPTIMASS)/include
+LDFLAGS  += -Wl,-rpath,$(OPTIMASS)/lib
+LIBS     += -L$(OPTIMASS)/lib -lOptiMass
+
+# ROOT (http://root.cern.ch/)
+CXXFLAGS += $(shell root-config --noauxcflags --cflags)
+LDFLAGS  += $(shell root-config --ldflags) \
+	-Wl,-rpath,$(shell root-config --libdir)
+LIBS     += $(shell root-config --noauxlibs --libs) -lMinuit2
+
 # Targets
 EXE    := $(BINDIR)/hh_optimass_parton
 EXESRC := $(patsubst $(BINDIR)/%,$(SRCDIR)/%.cc,$(EXE))
