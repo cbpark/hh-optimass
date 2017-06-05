@@ -10,7 +10,7 @@
 #include <iostream>
 #include <string>
 #include "clhef/lhef.h"
-#include "final_states.h"
+#include "parton_level.h"
 #include "user_interface.h"
 
 using std::cout;

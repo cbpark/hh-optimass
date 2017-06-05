@@ -6,8 +6,8 @@
  *  go to <http://www.gnu.org/licenses/> for full license details.
  */
 
-#ifndef SRC_FINAL_STATES_H_
-#define SRC_FINAL_STATES_H_
+#ifndef SRC_PARTON_LEVEL_H_
+#define SRC_PARTON_LEVEL_H_
 
 #include <string>
 #include <utility>
@@ -63,4 +63,4 @@ private:
 };
 }  // namespace hhom
 
-#endif  // SRC_FINAL_STATES_H_
+#endif  // SRC_PARTON_LEVEL_H_

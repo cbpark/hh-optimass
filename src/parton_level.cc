@@ -6,7 +6,7 @@
  *  go to <http://www.gnu.org/licenses/> for full license details.
  */
 
-#include "final_states.h"
+#include "parton_level.h"
 #include <string>
 #include <utility>
 #include "clhef/lhef.h"
