@@ -2,29 +2,23 @@
 #include <cmath>
 #include <string>
 #include <vector>
-#include "Minuit2/CombinedMinimizer.h"
-#include "Minuit2/FunctionMinimum.h"
-#include "Minuit2/MnStrategy.h"
-#include "Minuit2/SimplexMinimizer.h"
-#include "Minuit2/VariableMetricMinimizer.h"
 #include "alm_base/MassFunctionInterface.h"
 #include "alm_base/MassMinimizer.h"
 #include "alm_base/MathUtils.h"
 #include "alm_base/ProcessTree.h"
 #include "constants.h"
 
-using std::vector;
 using std::string;
+using std::vector;
 
 namespace OptiMass {
 void hh_minH::InitContainersProlog() {
     process_tree_.AddProcess(
-        "H - h1 h2 , ( h1 - b1 b2 )"
-        " , ( h2 - w1 w2 , ( w1 - e1 v1 ) , ( w2 - e2 v2 ) )");
+        string("H - h1 h2 , ( h1 - b1 b2 )") +
+        string(" , ( h2 - w1 w2 , ( w1 - e1 v1 ) , ( w2 - e2 v2 ) )"));
 
     vector<string> vec_invisibles{"v1", "v2"};
     process_tree_.SetInvisibles(vec_invisibles);
-
     process_tree_.SetMass("w1", hhom::MW);
     process_tree_.SetMass("h2", 0);
     process_tree_.SetMass("H", 0);
@@ -37,12 +31,10 @@ void hh_minH::InitContainersProlog() {
     process_tree_.SetMass("e1", 0);
     process_tree_.SetMass("w2", hhom::MW);
 
+    MassFunctionInterface *mass_interface = new MassFunctionParticle(
+        &process_tree_, "H", &CalcMassSquareFromIndice);
     mass_interface_ =
-        dynamic_cast<MassFunctionInterface *>(new MassFunctionGroup(
-            dynamic_cast<ProcessTree *>(&process_tree_), &CalcMean,
-            {dynamic_cast<MassFunctionInterface *>(new MassFunctionParticle(
-                dynamic_cast<ProcessTree *>(&process_tree_), "H",
-                &CalcMassSquareFromIndice))}));
+        new MassFunctionGroup(&process_tree_, &CalcMean, {mass_interface});
 
     vector<string> vec_optimize{"v1", "v2"};
     process_tree_.SetPtlOptimize(vec_optimize);
@@ -63,9 +55,9 @@ void hh_minH::InitContainersProlog() {
     alm_controller_.SetALMControlParam("eta_ratio", 100.);
     alm_controller_.SetALMControlParam("b_eta", 0.3);
 
-    double MScale_Parent = 100.;
-    double MScale_Rel = 0.;
-    double Cmax[2] = {0.001 * MScale_Parent, 0.001 * MScale_Rel};
+    const double MScale_Parent = 100.;
+    const double MScale_Rel = 0.;
+    const double Cmax[2]{0.001 * MScale_Parent, 0.001 * MScale_Rel};
     alm_controller_.SetALMControlParam("eta_s", std::hypot(Cmax[0], Cmax[1]));
 
     // set number of constraints
@@ -82,18 +74,10 @@ void hh_minH::InitContainersEpilog() {
     // Transverse Projection ( use this for calculate MT2 type variable
 }
 
-void hh_minH::CalcProlog() {
-    init_step_size_ = process_tree_.GetEffectiveScale();
-}
-
-void hh_minH::CalcStrategy(ROOT::Minuit2::MnUserParameters &params) {
-    MinimizeCombined(params);
-}
-
 void hh_minH::CalcConstraints(vector<double> &vec_constraints,
                               vector<bool> &vec_constraints_using) {
-    double h2_M = process_tree_.GetSubsystemMass("h2");
-    double h1_M = process_tree_.GetSubsystemMass("h1");
+    const double h2_M = process_tree_.GetSubsystemMass("h2");
+    const double h1_M = process_tree_.GetSubsystemMass("h1");
 
     // h1.M() - 125.
     if (vec_constraints_using.at(0)) {
@@ -101,14 +85,12 @@ void hh_minH::CalcConstraints(vector<double> &vec_constraints,
     } else {
         vec_constraints[0] = 0;
     }
-
     // h2.M() - 125.
     if (vec_constraints_using.at(1)) {
         vec_constraints[1] = h2_M - hhom::MH;
     } else {
         vec_constraints[1] = 0;
     }
-
     // h1.M() - h2.M()
     if (vec_constraints_using.at(2)) {
         vec_constraints[2] = h1_M - h2_M;
