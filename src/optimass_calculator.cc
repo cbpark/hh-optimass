@@ -15,11 +15,11 @@
 #include "parton_level.h"
 
 namespace hhom {
-double calcOptiMassHH(const PartonLevel &fstates) {
+double calcOptiMassHH(const PartonLevel &final_states) {
     OptiMass::MassMinimizer *optm = new OptiMass::hh_minH;
 
     optm->InitContainers();
-    const BLPairs bl_pairs = fstates.bl_pairs();
+    const BLPairs bl_pairs = final_states.bl_pairs();
     const BLSystem bl1 = bl_pairs.first, bl2 = bl_pairs.second;
     optm->SetMomentumValue("b1_x", bl1.bquark().px());
     optm->SetMomentumValue("b1_y", bl1.bquark().py());
@@ -38,7 +38,7 @@ double calcOptiMassHH(const PartonLevel &fstates) {
     optm->SetMomentumValue("e2_z", bl2.lepton().pz());
     optm->SetMomentumValue("e2_m", bl2.lepton().mass());
 
-    const auto met = fstates.missing();
+    const auto met = final_states.missing();
     optm->SetInvisibleSubsystemMomenta(0, met.px(), met.py());
     optm->SetInitInvisibleMomentum("v1_m", 0.);
     optm->SetInitInvisibleMomentum("v2_m", 0.);

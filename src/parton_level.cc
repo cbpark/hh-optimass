@@ -17,7 +17,7 @@ std::string show(const BLSystem &bl) {
 }
 
 lhef::Particle PartonLevel::missing() const {
-    lhef::Particles neus = lhef::selectByID(lhef::Neutrino, fstates_);
+    lhef::Particles neus = lhef::selectByID(lhef::Neutrino, final_states_);
     return lhef::sum(neus);
 }
 
@@ -28,16 +28,16 @@ lhef::Particle PartonLevel::utm() const {
                    lhef::LeptonIso.cend());
     b_l_neu.insert(b_l_neu.end(), lhef::Neutrino.cbegin(),
                    lhef::Neutrino.cend());
-    lhef::Particles extra = lhef::excludeByID(b_l_neu, fstates_);
+    lhef::Particles extra = lhef::excludeByID(b_l_neu, final_states_);
     return lhef::sum(extra);
 }
 
 lhef::Particles PartonLevel::bquarks() const {
-    return lhef::selectByID(lhef::Bottom, fstates_);
+    return lhef::selectByID(lhef::Bottom, final_states_);
 }
 
 lhef::Particles PartonLevel::leptons() const {
-    return lhef::selectByID(lhef::LeptonIso, fstates_);
+    return lhef::selectByID(lhef::LeptonIso, final_states_);
 }
 
 bool valid(const lhef::Particles &ps) {

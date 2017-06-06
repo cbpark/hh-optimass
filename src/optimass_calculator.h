@@ -12,7 +12,7 @@
 #include "parton_level.h"
 
 namespace hhom {
-double calcOptiMassHH(const PartonLevel &fstates);
+double calcOptiMassHH(const PartonLevel &final_states);
 }  // namespace hhom
 
 #endif  // SRC_OPTIMASS_CALCULATOR_H_

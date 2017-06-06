@@ -39,7 +39,7 @@ using BLPairs = std::pair<BLSystem, BLSystem>;
 
 class PartonLevel {
 private:
-    lhef::Particles fstates_;
+    lhef::Particles final_states_;
 
     /*
      * The b and lepton pair does not make sense since they have different
@@ -51,7 +51,7 @@ private:
 public:
     PartonLevel() = delete;
     explicit PartonLevel(const lhef::Event &e)
-        : fstates_{lhef::finalStates(e)}, bl_pairs_{pairing()} {}
+        : final_states_{lhef::finalStates(e)}, bl_pairs_{pairing()} {}
 
     bool has_bl_pairs() const {
         return bl_pairs_.first.is_filled() && bl_pairs_.second.is_filled();
