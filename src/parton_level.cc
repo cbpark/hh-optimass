@@ -12,6 +12,39 @@
 #include "clhef/lhef.h"
 
 namespace hhom {
+bool valid(const lhef::Particles &ps) {
+    if (ps.size() != 2) { return false; }
+    // Since the total system is neutral, we must have a particle and an
+    // anti-particle.
+    if (ps[0].pid() * ps[1].pid() >= 0) { return false; }
+    return true;
+}
+
+BLPairs<lhef::Particle> pairing(const lhef::Particles &bs,
+                                const lhef::Particles &ls) {
+    BLSystem<lhef::Particle> bl1, bl2;
+    if (!valid(bs) || !valid(ls)) { return std::make_pair(bl1, bl2); }
+
+    lhef::transformParticles(bs, [&bl1, &bl2](const lhef::Particle &b) {
+        b.pid() > 0 ? bl1.set_bjet(b) : bl2.set_bjet(b);
+    });
+    lhef::transformParticles(ls, [&bl1, &bl2](const lhef::Particle &l) {
+        l.pid() > 0 ? bl2.set_lepton(l) : bl1.set_lepton(l);
+    });
+
+    bl1.set_filled(true);
+    bl2.set_filled(true);
+    return std::make_pair(bl1, bl2);
+}
+
+lhef::Particles PartonLevel::bjets() const {
+    return lhef::selectByID(lhef::Bottom, final_states_);
+}
+
+lhef::Particles PartonLevel::leptons() const {
+    return lhef::selectByID(lhef::LeptonIso, final_states_);
+}
+
 lhef::Particle PartonLevel::missing() const {
     lhef::Particles neus = lhef::selectByID(lhef::Neutrino, final_states_);
     return lhef::sum(neus);
@@ -26,40 +59,6 @@ lhef::Particle PartonLevel::utm() const {
                    lhef::Neutrino.cend());
     lhef::Particles extra = lhef::excludeByID(b_l_neu, final_states_);
     return lhef::sum(extra);
-}
-
-lhef::Particles PartonLevel::bjets() const {
-    return lhef::selectByID(lhef::Bottom, final_states_);
-}
-
-lhef::Particles PartonLevel::leptons() const {
-    return lhef::selectByID(lhef::LeptonIso, final_states_);
-}
-
-bool valid(const lhef::Particles &ps) {
-    if (ps.size() != 2) { return false; }
-    // Since the total system is neutral, we must have a particle and an
-    // anti-particle.
-    if (ps[0].pid() * ps[1].pid() >= 0) { return false; }
-    return true;
-}
-
-BLPairs<lhef::Particle> PartonLevel::pairing() {
-    const lhef::Particles bs{bjets()};
-    const lhef::Particles ls{leptons()};
-    BLSystem<lhef::Particle> bl1, bl2;
-    if (!valid(bs) || !valid(ls)) { return std::make_pair(bl1, bl2); }
-
-    lhef::transformParticles(bs, [&bl1, &bl2](const lhef::Particle &b) {
-        b.pid() > 0 ? bl1.set_bjet(b) : bl2.set_bjet(b);
-    });
-    lhef::transformParticles(ls, [&bl1, &bl2](const lhef::Particle &l) {
-        l.pid() > 0 ? bl2.set_lepton(l) : bl1.set_lepton(l);
-    });
-
-    bl1.set_filled(true);
-    bl2.set_filled(true);
-    return std::make_pair(bl1, bl2);
 }
 
 BLPairs<lhef::Particle> PartonLevel::bl_wrong_pairs() const {

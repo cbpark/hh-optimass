@@ -40,15 +40,30 @@ using BLPairs = std::pair<BLSystem<P>, BLSystem<P>>;
  */
 template <typename P>
 class FinalStates {
+protected:
+    std::vector<P> final_states_;
+
+    /*
+     * The b and lepton pair does not make sense since they have different
+     * parents in the Higgs pair processes. This is to use for the top pair
+     * process, which is the most dominant background.
+     */
+    BLPairs<P> bl_pairs_;
+
 public:
+    explicit FinalStates(const std::vector<P> &final_state)
+        : final_states_(final_state) {}
     virtual ~FinalStates() {}
 
     virtual std::vector<P> bjets() const = 0;
     virtual std::vector<P> leptons() const = 0;
-    virtual bool has_bl_pairs() const = 0;
-    virtual BLPairs<P> bl_pairs() const = 0;
     virtual P missing() const = 0;
     virtual P utm() const = 0;
+
+    bool has_bl_pairs() const {
+        return bl_pairs_.first.is_filled() && bl_pairs_.second.is_filled();
+    }
+    BLPairs<P> bl_pairs() const { return bl_pairs_; }
 };
 }  // namespace hhom
 

@@ -14,35 +14,23 @@
 #include "final_states.h"
 
 namespace hhom {
+BLPairs<lhef::Particle> pairing(const lhef::Particles &bs,
+                                const lhef::Particles &ls);
+
 class PartonLevel : public FinalStates<lhef::Particle> {
-private:
-    lhef::Particles final_states_;
-
-    /*
-     * The b and lepton pair does not make sense since they have different
-     * parents in the Higgs pair processes. This is to use for the top pair
-     * process, which is the most dominant background.
-     */
-    BLPairs<lhef::Particle> bl_pairs_;
-
 public:
     PartonLevel() = delete;
     explicit PartonLevel(const lhef::Event &e)
-        : final_states_(lhef::finalStates(e)), bl_pairs_(pairing()) {}
+        : FinalStates<lhef::Particle>{lhef::finalStates(e)} {
+        bl_pairs_ = pairing(bjets(), leptons());
+    }
 
     lhef::Particles bjets() const override;
     lhef::Particles leptons() const override;
-    bool has_bl_pairs() const override {
-        return bl_pairs_.first.is_filled() && bl_pairs_.second.is_filled();
-    }
-    BLPairs<lhef::Particle> bl_pairs() const override { return bl_pairs_; }
-    BLPairs<lhef::Particle> bl_wrong_pairs() const;
-
     lhef::Particle missing() const override;
     lhef::Particle utm() const override;
 
-private:
-    std::pair<BLSystem<lhef::Particle>, BLSystem<lhef::Particle>> pairing();
+    BLPairs<lhef::Particle> bl_wrong_pairs() const;
 };
 
 std::string show(const BLSystem<lhef::Particle> &bl);
