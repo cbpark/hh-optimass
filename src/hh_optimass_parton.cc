@@ -14,14 +14,13 @@
 #include "parton_level.h"
 #include "user_interface.h"
 
-using std::cout;
 using std::to_string;
 
 const char appname[] = "hh_optimass_parton";
 
 int main(int argc, char *argv[]) {
     if (argc != 2) { return howToUse(appname, "<input>"); }
-    const auto to_out = &cout;  // information will be displayed in screen.
+    const auto to_out = &std::cout;  // information will be displayed in screen.
 
     std::ifstream fin(argv[1]);
     if (fin.fail()) {
@@ -34,7 +33,8 @@ int main(int argc, char *argv[]) {
     for (; !event.done(); event = lhef::parseEvent(&fin)) {
         hhom::PartonLevel ps{event};
         if (!ps.has_bl_pairs()) { continue; }
-        hhom::OptiMassResult om = hhom::calcOptiMassHH(ps);
+
+        hhom::OptiMassResult om{hhom::calcOptiMassHH(ps)};
         std::cout << om << '\n';
     }
 }

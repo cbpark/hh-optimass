@@ -15,6 +15,9 @@
 #include "alm_base/ProcessTree.h"
 #include "hh_minH.h"
 #include "parton_level.h"
+#ifdef DEBUG
+#include <iostream>
+#endif
 
 namespace hhom {
 std::ostream &operator<<(std::ostream &os, const OptiMassResult &re) {
@@ -32,6 +35,12 @@ OptiMassResult calcOptiMassHH(const PartonLevel &final_states) {
 
     const BLPairs bl_pairs = final_states.bl_pairs();
     const BLSystem bl1 = bl_pairs.first, bl2 = bl_pairs.second;
+
+#ifdef DEBUG
+    std::cout << "-- b-l pair:\n";
+    std::cout << show(bl1) << '\n' << show(bl2) << '\n';
+#endif
+
     optm->SetMomentumValue("b1_x", bl1.bquark().px());
     optm->SetMomentumValue("b1_y", bl1.bquark().py());
     optm->SetMomentumValue("b1_z", bl1.bquark().pz());
@@ -50,6 +59,10 @@ OptiMassResult calcOptiMassHH(const PartonLevel &final_states) {
     optm->SetMomentumValue("e2_m", bl2.lepton().mass());
 
     const auto met = final_states.missing();
+#ifdef DEBUG
+    std::cout << "-- missing:\n" << show(met) << '\n';
+#endif
+
     optm->SetInvisibleSubsystemMomenta(0, met.px(), met.py());
     optm->SetInitInvisibleMomentum("v1_m", 0.);
     optm->SetInitInvisibleMomentum("v2_m", 0.);
