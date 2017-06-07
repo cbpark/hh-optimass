@@ -10,34 +10,11 @@
 #define SRC_PARTON_LEVEL_H_
 
 #include <string>
-#include <utility>
 #include "clhef/lhef.h"
+#include "final_states.h"
 
 namespace hhom {
-class BLSystem {
-private:
-    lhef::Particle bquark_, lepton_;
-    bool filled_ = false;
-
-public:
-    BLSystem() {}
-    BLSystem(const lhef::Particle &bquark, const lhef::Particle &lepton)
-        : bquark_(bquark), lepton_(lepton), filled_(true) {}
-
-    void add_bquark(const lhef::Particle &bquark) { bquark_ = bquark; }
-    void add_lepton(const lhef::Particle &lepton) { lepton_ = lepton; }
-
-    bool is_filled() const { return filled_; }
-    void set_filled(bool filled) { filled_ = filled; }
-    lhef::Particle bquark() const { return bquark_; }
-    lhef::Particle lepton() const { return lepton_; }
-};
-
-std::string show(const BLSystem &bl);
-
-using BLPairs = std::pair<BLSystem, BLSystem>;
-
-class PartonLevel {
+class PartonLevel : public FinalStates<lhef::Particle> {
 private:
     lhef::Particles final_states_;
 
@@ -46,27 +23,30 @@ private:
      * parents in the Higgs pair processes. This is to use for the top pair
      * process, which is the most dominant background.
      */
-    BLPairs bl_pairs_;
+    BLPairs<lhef::Particle> bl_pairs_;
 
 public:
     PartonLevel() = delete;
     explicit PartonLevel(const lhef::Event &e)
-        : final_states_{lhef::finalStates(e)}, bl_pairs_{pairing()} {}
+        : final_states_(lhef::finalStates(e)), bl_pairs_(pairing()) {}
 
-    bool has_bl_pairs() const {
+    lhef::Particles bjets() const override;
+    lhef::Particles leptons() const override;
+    bool has_bl_pairs() const override {
         return bl_pairs_.first.is_filled() && bl_pairs_.second.is_filled();
     }
-    BLPairs bl_pairs() const { return bl_pairs_; }
-    BLPairs bl_wrong_pairs() const;
+    BLPairs<lhef::Particle> bl_pairs() const override { return bl_pairs_; }
+    BLPairs<lhef::Particle> bl_wrong_pairs() const;
 
-    lhef::Particle missing() const;
-    lhef::Particle utm() const;
+    lhef::Particle missing() const override;
+    lhef::Particle utm() const override;
 
 private:
-    std::pair<BLSystem, BLSystem> pairing();
-    lhef::Particles bquarks() const;
-    lhef::Particles leptons() const;
+    std::pair<BLSystem<lhef::Particle>, BLSystem<lhef::Particle>> pairing();
 };
+
+std::string show(const BLSystem<lhef::Particle> &bl);
+std::string show(const BLPairs<lhef::Particle> &bl_pairs);
 }  // namespace hhom
 
 #endif  // SRC_PARTON_LEVEL_H_

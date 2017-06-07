@@ -9,7 +9,6 @@
 #ifndef SRC_FINAL_STATES_H_
 #define SRC_FINAL_STATES_H_
 
-#include <string>
 #include <vector>
 
 namespace hhom {
@@ -43,6 +42,7 @@ template <typename P>
 class FinalStates {
 public:
     virtual ~FinalStates() {}
+
     virtual std::vector<P> bjets() const = 0;
     virtual std::vector<P> leptons() const = 0;
     virtual bool has_bl_pairs() const = 0;

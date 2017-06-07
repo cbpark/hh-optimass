@@ -37,11 +37,13 @@ int main(int argc, char *argv[]) {
         hhom::PartonLevel ps{event};
 #if DEBUG
         message(appname, "event (" + std::to_string(iev) + ")", to_out);
+        std::cout << "-- b-l pairs:\n" << hhom::show(ps.bl_pairs()) << '\n';
+        std::cout << "-- missing:\n" << lhef::show(ps.missing()) << '\n';
 #endif
         if (!ps.has_bl_pairs()) { continue; }
 
-        hhom::OptiMassResult om{hhom::calcOptiMassHH(ps)};
-        // hhom::OptiMassResult om{hhom::calcOptiMassTTbar(ps)};
+        hhom::OptiMassResult om = hhom::calcOptiMassHH<lhef::Particle>(ps);
+        // hhom::OptiMassResult om{hhom::calcOptiMassTTbar<lhef::Particle>(ps)};
         std::cout << om << '\n';
     }
 }

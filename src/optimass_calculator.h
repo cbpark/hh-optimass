@@ -10,7 +10,7 @@
 #define SRC_OPTIMASS_CALCULATOR_H_
 
 #include <ostream>
-#include "parton_level.h"
+#include "final_states.h"
 
 namespace hhom {
 const double ETAS = 0.1;
@@ -24,7 +24,8 @@ private:
     Convergence cvg_;
 
 public:
-    OptiMassResult() = delete;
+    OptiMassResult()
+        : mass_(-1), sum_constraints_(-1), cvg_(Convergence::NotConverged) {}
     OptiMassResult(const double mass, const double sum, const Convergence cvg)
         : mass_(mass), sum_constraints_(sum), cvg_(cvg) {}
 
@@ -35,9 +36,11 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const OptiMassResult &re);
 };
 
-OptiMassResult calcOptiMassHH(const PartonLevel &final_states);
+template <typename P>
+OptiMassResult calcOptiMassHH(const FinalStates<P> &final_states);
 
-OptiMassResult calcOptiMassTTbar(const PartonLevel &final_states);
+template <typename P>
+OptiMassResult calcOptiMassTTbar(const FinalStates<P> &final_states);
 }  // namespace hhom
 
 #endif  // SRC_OPTIMASS_CALCULATOR_H_

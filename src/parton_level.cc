@@ -12,10 +12,6 @@
 #include "clhef/lhef.h"
 
 namespace hhom {
-std::string show(const BLSystem &bl) {
-    return "[" + lhef::show(bl.bquark()) + ", " + lhef::show(bl.lepton()) + "]";
-}
-
 lhef::Particle PartonLevel::missing() const {
     lhef::Particles neus = lhef::selectByID(lhef::Neutrino, final_states_);
     return lhef::sum(neus);
@@ -32,7 +28,7 @@ lhef::Particle PartonLevel::utm() const {
     return lhef::sum(extra);
 }
 
-lhef::Particles PartonLevel::bquarks() const {
+lhef::Particles PartonLevel::bjets() const {
     return lhef::selectByID(lhef::Bottom, final_states_);
 }
 
@@ -48,17 +44,17 @@ bool valid(const lhef::Particles &ps) {
     return true;
 }
 
-BLPairs PartonLevel::pairing() {
-    const lhef::Particles bs{bquarks()};
+BLPairs<lhef::Particle> PartonLevel::pairing() {
+    const lhef::Particles bs{bjets()};
     const lhef::Particles ls{leptons()};
-    BLSystem bl1, bl2;
+    BLSystem<lhef::Particle> bl1, bl2;
     if (!valid(bs) || !valid(ls)) { return std::make_pair(bl1, bl2); }
 
     lhef::transformParticles(bs, [&bl1, &bl2](const lhef::Particle &b) {
-        b.pid() > 0 ? bl1.add_bquark(b) : bl2.add_bquark(b);
+        b.pid() > 0 ? bl1.set_bjet(b) : bl2.set_bjet(b);
     });
     lhef::transformParticles(ls, [&bl1, &bl2](const lhef::Particle &l) {
-        l.pid() > 0 ? bl2.add_lepton(l) : bl1.add_lepton(l);
+        l.pid() > 0 ? bl2.set_lepton(l) : bl1.set_lepton(l);
     });
 
     bl1.set_filled(true);
@@ -66,9 +62,20 @@ BLPairs PartonLevel::pairing() {
     return std::make_pair(bl1, bl2);
 }
 
-BLPairs PartonLevel::bl_wrong_pairs() const {
-    BLSystem bl1{bl_pairs_.first.bquark(), bl_pairs_.second.lepton()};
-    BLSystem bl2{bl_pairs_.second.bquark(), bl_pairs_.first.lepton()};
+BLPairs<lhef::Particle> PartonLevel::bl_wrong_pairs() const {
+    BLSystem<lhef::Particle> bl1{bl_pairs_.first.bjet(),
+                                 bl_pairs_.second.lepton()};
+    BLSystem<lhef::Particle> bl2{bl_pairs_.second.bjet(),
+                                 bl_pairs_.first.lepton()};
     return std::make_pair(bl1, bl2);
+}
+
+std::string show(const BLSystem<lhef::Particle> &bl) {
+    return "[" + lhef::show(bl.bjet()) + ", " + lhef::show(bl.lepton()) + "]";
+}
+
+std::string show(const BLPairs<lhef::Particle> &bl_pairs) {
+    const BLSystem<lhef::Particle> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
+    return show(bl1) + "\n" + show(bl2);
 }
 }  // namespace hhom
