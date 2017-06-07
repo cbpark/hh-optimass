@@ -9,7 +9,7 @@
 #include "optimass_calculator.h"
 #include <iomanip>
 #include <ostream>
-#include "TError.h"  // for gErrorIgnoreLevel
+#include "TTbar_minmaxt1t2.h"
 #include "alm_base/ALMController.h"
 #include "alm_base/MassMinimizer.h"
 #include "alm_base/ProcessTree.h"
@@ -29,13 +29,12 @@ std::ostream &operator<<(std::ostream &os, const OptiMassResult &re) {
     return os;
 }
 
-OptiMassResult calcOptiMassHH(const PartonLevel &final_states) {
-    OptiMass::MassMinimizer *optm = new OptiMass::hh_minH;
+void initOptiMass(const PartonLevel &final_states,
+                  OptiMass::MassMinimizer *optm) {
     optm->InitContainers();
 
     const BLPairs bl_pairs = final_states.bl_pairs();
     const BLSystem bl1 = bl_pairs.first, bl2 = bl_pairs.second;
-
 #ifdef DEBUG
     std::cout << "-- b-l pair:\n";
     std::cout << show(bl1) << '\n' << show(bl2) << '\n';
@@ -66,21 +65,43 @@ OptiMassResult calcOptiMassHH(const PartonLevel &final_states) {
     optm->SetInvisibleSubsystemMomenta(0, met.px(), met.py());
     optm->SetInitInvisibleMomentum("v1_m", 0.);
     optm->SetInitInvisibleMomentum("v2_m", 0.);
+}
 
+OptiMassResult optiMassResult(OptiMass::MassMinimizer *optm,
+                              const OptiMass::ALMController &alm_controller,
+                              const std::string &sys_name) {
+    OptiMass::ProcessTree &process_tree = optm->GetProcessTree();
+    const double om = process_tree.GetSubsystemMass(sys_name);
+    const double cd = alm_controller.GetSumSquaredConstraints();
+    Convergence cvg = Convergence::NotConverged;
+    if (cd <= ETAS) { cvg = Convergence::Converged; }
+    return OptiMassResult{om, cd, cvg};
+}
+
+OptiMassResult calcOptiMassHH(const PartonLevel &final_states) {
+    OptiMass::MassMinimizer *optm = new OptiMass::hh_minH();
+    initOptiMass(final_states, optm);
     OptiMass::ALMController &alm_controller = optm->GetALMController();
     alm_controller.UseConstraint(0, true);
     alm_controller.UseConstraint(1, true);
     alm_controller.UseConstraint(2, false);
-
-    gErrorIgnoreLevel = 1001;
     optm->Calc();
 
-    OptiMass::ProcessTree &process_tree = optm->GetProcessTree();
-    const double om = process_tree.GetSubsystemMass("H");
-    const double cd = alm_controller.GetSumSquaredConstraints();
-    Convergence cvg = Convergence::NotConverged;
-    if (cd <= ETAS) { cvg = Convergence::Converged; }
+    return optiMassResult(optm, alm_controller, "H");
+}
 
-    return OptiMassResult{om, cd, cvg};
+OptiMassResult calcOptiMassTTbar(const PartonLevel &final_states) {
+    OptiMass::MassMinimizer *optm = new OptiMass::TTbar_minmaxt1t2();
+    initOptiMass(final_states, optm);
+    OptiMass::ALMController &alm_controller = optm->GetALMController();
+    alm_controller.UseConstraint(0, true);
+    alm_controller.UseConstraint(1, true);
+    alm_controller.UseConstraint(2, false);
+    alm_controller.UseConstraint(3, true);
+    alm_controller.UseConstraint(4, true);
+    alm_controller.UseConstraint(5, false);
+    optm->Calc();
+
+    return optiMassResult(optm, alm_controller, "s");
 }
 }  // namespace hhom

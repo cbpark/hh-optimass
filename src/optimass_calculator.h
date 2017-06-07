@@ -36,6 +36,8 @@ public:
 };
 
 OptiMassResult calcOptiMassHH(const PartonLevel &final_states);
+
+OptiMassResult calcOptiMassTTbar(const PartonLevel &final_states);
 }  // namespace hhom
 
 #endif  // SRC_OPTIMASS_CALCULATOR_H_

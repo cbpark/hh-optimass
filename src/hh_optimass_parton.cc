@@ -9,12 +9,11 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include "TError.h"  // for gErrorIgnoreLevel
 #include "clhef/lhef.h"
 #include "optimass_calculator.h"
 #include "parton_level.h"
 #include "user_interface.h"
-
-using std::to_string;
 
 const char appname[] = "hh_optimass_parton";
 
@@ -29,12 +28,20 @@ int main(int argc, char *argv[]) {
         message(appname, "reading `" + std::string(argv[1]) + "' ...", to_out);
     }
 
+#ifndef DEBUG
+    gErrorIgnoreLevel = 1001;  // to make Minuit2 quiet
+#endif
+
     auto event{lhef::parseEvent(&fin)};
-    for (; !event.done(); event = lhef::parseEvent(&fin)) {
+    for (int iev = 1; !event.done(); event = lhef::parseEvent(&fin), ++iev) {
         hhom::PartonLevel ps{event};
+#if DEBUG
+        message(appname, "event (" + std::to_string(iev) + ")", to_out);
+#endif
         if (!ps.has_bl_pairs()) { continue; }
 
         hhom::OptiMassResult om{hhom::calcOptiMassHH(ps)};
+        // hhom::OptiMassResult om{hhom::calcOptiMassTTbar(ps)};
         std::cout << om << '\n';
     }
 }
