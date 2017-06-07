@@ -57,7 +57,7 @@ BLPairs PartonLevel::pairing() {
     lhef::transformParticles(bs, [&bl1, &bl2](const lhef::Particle &b) {
         b.pid() > 0 ? bl1.add_bquark(b) : bl2.add_bquark(b);
     });
-    lhef::transformParticles(bs, [&bl1, &bl2](const lhef::Particle &l) {
+    lhef::transformParticles(ls, [&bl1, &bl2](const lhef::Particle &l) {
         l.pid() > 0 ? bl2.add_lepton(l) : bl1.add_lepton(l);
     });
 
