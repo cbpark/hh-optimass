@@ -12,8 +12,6 @@
 #include <vector>
 #include "alm_base/MassFunctionInterface.h"
 #include "alm_base/MassMinimizer.h"
-#include "alm_base/MathUtils.h"
-#include "alm_base/ProcessTree.h"
 #include "constants.h"
 
 using std::string;

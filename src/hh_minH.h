@@ -14,7 +14,6 @@
 #include "alm_base/MassMinimizer.h"
 
 namespace OptiMass {
-
 class hh_minH : public MassMinimizer {
 public:
     hh_minH() {}
@@ -22,9 +21,7 @@ public:
 
     void InitContainersProlog();
     void InitContainersEpilog();
-    void CalcProlog() {
-        init_step_size_ = process_tree_.GetEffectiveScale();
-    }
+    void CalcProlog() { init_step_size_ = process_tree_.GetEffectiveScale(); }
     void CalcStrategy(ROOT::Minuit2::MnUserParameters &params) {
         MinimizeCombined(params);
     }
