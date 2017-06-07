@@ -1,3 +1,11 @@
+/*
+ *  Copyright (c) 2017 Won Sang Cho, Chan Beom Park
+ *
+ *  This file is part of hh-optimass, which is released under the GNU General
+ *  Public License. See file LICENSE in the top directory of this project or
+ *  go to <http://www.gnu.org/licenses/> for full license details.
+ */
+
 #ifndef SRC_OPTIMASS_HH_MINH_
 #define SRC_OPTIMASS_HH_MINH_
 
