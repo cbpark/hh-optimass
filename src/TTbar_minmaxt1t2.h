@@ -29,6 +29,6 @@ public:
     void CalcConstraints(std::vector<double> &vec_constraints,
                          std::vector<bool> &vec_constraints_using);
 };
-}  // namespace optimass
+}  // namespace OptiMass
 
 #endif  // SRC_OPTIMASS_TTBAR_MINMAXT1T2_H_

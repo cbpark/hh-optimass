@@ -15,11 +15,13 @@
 #include "parton_level.h"
 #include "user_interface.h"
 
+using std::cout;
+
 const char appname[] = "hh_optimass_parton";
 
 int main(int argc, char *argv[]) {
     if (argc != 2) { return howToUse(appname, "<input>"); }
-    const auto to_out = &std::cout;  // information will be displayed in screen.
+    const auto to_out = &cout;  // information will be displayed in screen.
 
     std::ifstream fin(argv[1]);
     if (fin.fail()) {
@@ -35,15 +37,15 @@ int main(int argc, char *argv[]) {
     auto event{lhef::parseEvent(&fin)};
     for (int iev = 1; !event.done(); event = lhef::parseEvent(&fin), ++iev) {
         hhom::PartonLevel ps{event};
-#if DEBUG
+#ifdef DEBUG
         message(appname, "event (" + std::to_string(iev) + ")", to_out);
-        std::cout << "-- b-l pairs:\n" << hhom::show(ps.bl_pairs()) << '\n';
-        std::cout << "-- missing:\n" << lhef::show(ps.missing()) << '\n';
+        cout << "-- b-l pairs:\n" << hhom::show(ps.bl_pairs()) << '\n';
+        cout << "-- missing:\n" << lhef::show(ps.missing()) << '\n';
 #endif
         if (!ps.has_bl_pairs()) { continue; }
 
         hhom::OptiMassResult om = hhom::calcOptiMassHH<lhef::Particle>(ps);
         // hhom::OptiMassResult om{hhom::calcOptiMassTTbar<lhef::Particle>(ps)};
-        std::cout << om << '\n';
+        cout << om << '\n';
     }
 }

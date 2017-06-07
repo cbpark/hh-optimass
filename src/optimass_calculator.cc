@@ -9,6 +9,7 @@
 #include "optimass_calculator.h"
 #include <iomanip>
 #include <ostream>
+#include <string>
 #include "TTbar_minmaxt1t2.h"
 #include "alm_base/ALMController.h"
 #include "alm_base/MassMinimizer.h"

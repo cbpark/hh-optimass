@@ -9,6 +9,7 @@
 #ifndef SRC_FINAL_STATES_H_
 #define SRC_FINAL_STATES_H_
 
+#include <utility>
 #include <vector>
 
 namespace hhom {
@@ -16,10 +17,10 @@ template <typename P>
 class BLSystem {
 private:
     P bjet_, lepton_;
-    bool filled_ = false;
+    bool filled_;
 
 public:
-    BLSystem() {}
+    BLSystem() : filled_(false) {}
     BLSystem(const P &bjet, const P &lepton)
         : bjet_(bjet), lepton_(lepton), filled_(true) {}
 
