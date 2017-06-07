@@ -7,6 +7,8 @@
  */
 
 #include "optimass_calculator.h"
+#include <iomanip>
+#include <ostream>
 #include "TError.h"  // for gErrorIgnoreLevel
 #include "alm_base/ALMController.h"
 #include "alm_base/MassMinimizer.h"
@@ -15,10 +17,19 @@
 #include "parton_level.h"
 
 namespace hhom {
-double calcOptiMassHH(const PartonLevel &final_states) {
-    OptiMass::MassMinimizer *optm = new OptiMass::hh_minH;
+std::ostream &operator<<(std::ostream &os, const OptiMassResult &re) {
+    using namespace std;
 
+    os << right << fixed << setw(10) << setprecision(3) << re.mass_ << setw(11)
+       << setprecision(5) << re.sum_constraints_ << setw(5)
+       << static_cast<int>(re.cvg_);
+    return os;
+}
+
+OptiMassResult calcOptiMassHH(const PartonLevel &final_states) {
+    OptiMass::MassMinimizer *optm = new OptiMass::hh_minH;
     optm->InitContainers();
+
     const BLPairs bl_pairs = final_states.bl_pairs();
     const BLSystem bl1 = bl_pairs.first, bl2 = bl_pairs.second;
     optm->SetMomentumValue("b1_x", bl1.bquark().px());
@@ -43,7 +54,7 @@ double calcOptiMassHH(const PartonLevel &final_states) {
     optm->SetInitInvisibleMomentum("v1_m", 0.);
     optm->SetInitInvisibleMomentum("v2_m", 0.);
 
-    auto alm_controller = optm->GetALMController();
+    OptiMass::ALMController &alm_controller = optm->GetALMController();
     alm_controller.UseConstraint(0, true);
     alm_controller.UseConstraint(1, true);
     alm_controller.UseConstraint(2, false);
@@ -51,7 +62,12 @@ double calcOptiMassHH(const PartonLevel &final_states) {
     gErrorIgnoreLevel = 1001;
     optm->Calc();
 
-    auto process_tree = optm->GetProcessTree();
-    return process_tree.GetSubsystemMass("H");
+    OptiMass::ProcessTree &process_tree = optm->GetProcessTree();
+    const double om = process_tree.GetSubsystemMass("H");
+    const double cd = alm_controller.GetSumSquaredConstraints();
+    Convergence cvg = Convergence::NotConverged;
+    if (cd <= ETAS) { cvg = Convergence::Converged; }
+
+    return OptiMassResult{om, cd, cvg};
 }
 }  // namespace hhom

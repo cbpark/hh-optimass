@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include "clhef/lhef.h"
+#include "optimass_calculator.h"
 #include "parton_level.h"
 #include "user_interface.h"
 
@@ -33,15 +34,7 @@ int main(int argc, char *argv[]) {
     for (; !event.done(); event = lhef::parseEvent(&fin)) {
         hhom::PartonLevel ps{event};
         if (!ps.has_bl_pairs()) { continue; }
-        const auto bl_pairs{ps.bl_pairs()};
-        cout << "b-l pairs:\n"
-             << show(bl_pairs.first) << '\n'
-             << show(bl_pairs.second) << '\n';
-        const auto bl_wrong_pairs{ps.bl_wrong_pairs()};
-        cout << "b-l pairs (wrong):\n"
-             << show(bl_wrong_pairs.first) << '\n'
-             << show(bl_wrong_pairs.second) << '\n';
-        cout << "missing:\n" << lhef::show(ps.missing()) << '\n';
-        cout << "utm:\n" << lhef::show(ps.utm()) << '\n';
+        hhom::OptiMassResult om = hhom::calcOptiMassHH(ps);
+        std::cout << om << '\n';
     }
 }
