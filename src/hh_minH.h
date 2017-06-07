@@ -6,8 +6,8 @@
  *  go to <http://www.gnu.org/licenses/> for full license details.
  */
 
-#ifndef SRC_OPTIMASS_HH_MINH_
-#define SRC_OPTIMASS_HH_MINH_
+#ifndef SRC_OPTIMASS_HH_MINH_H_
+#define SRC_OPTIMASS_HH_MINH_H_
 
 #include <vector>
 #include "Minuit2/MnUserParameters.h"
@@ -16,7 +16,7 @@
 namespace OptiMass {
 class hh_minH : public MassMinimizer {
 public:
-    hh_minH() {}
+    hh_minH() : MassMinimizer(false) {}
     ~hh_minH() { delete mass_interface_; }
 
     void InitContainersProlog();
@@ -31,4 +31,4 @@ public:
 };
 }  // namespace optimass
 
-#endif  // SRC_OPTIMASS_HH_MINH_
+#endif  // SRC_OPTIMASS_HH_MINH_H_
