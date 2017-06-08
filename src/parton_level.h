@@ -29,8 +29,6 @@ public:
     lhef::Particles leptons() const override;
     lhef::Particle missing() const override;
     lhef::Particle utm() const override;
-
-    BLPairs<lhef::Particle> bl_wrong_pairs() const;
 };
 
 std::string show(const BLSystem<lhef::Particle> &bl);

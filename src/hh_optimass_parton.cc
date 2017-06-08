@@ -6,6 +6,7 @@
  *  go to <http://www.gnu.org/licenses/> for full license details.
  */
 
+#include "hh_optimass_parton.h"
 #include <fstream>
 #include <iostream>
 #include <streambuf>
@@ -53,9 +54,7 @@ int main(int argc, char *argv[]) {
         printProgress(appname, 1000, ++nev, to_out);
         hhom::PartonLevel ps{event};
 #if DEBUG
-        message(appname, "event (" + std::to_string(nev) + ")", to_out);
-        cout << "-- b-l pairs:\n" << hhom::show(ps.bl_pairs()) << '\n';
-        cout << "-- missing:\n" << lhef::show(ps.missing()) << '\n';
+        printEvent(appname, ps, nev, to_out);
 #endif
         if (!ps.has_bl_pairs()) { continue; }
 
