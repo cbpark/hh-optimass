@@ -36,13 +36,15 @@ LDFLAGS  += $(shell root-config --ldflags) \
 LIBS     += $(shell root-config --noauxlibs --libs) -lMinuit2
 
 # Targets
-EXE    := $(BINDIR)/hh_optimass_parton
-EXESRC := $(patsubst $(BINDIR)/%,$(SRCDIR)/%.cc,$(EXE))
-EXEOBJ := $(EXESRC:.cc=.o)
-LIB    := $(LIBDIR)/libHHOM.a
-LIBSRC := $(filter-out $(EXESRC),$(wildcard $(SRCDIR)/*.cc))
-LIBOBJ := $(LIBSRC:.cc=.o)
-HEAD   := $(filter-out $(EXESRC:.cc=.h),$(wildcard $(SRCDIR)/*.h))
+EXE        := $(BINDIR)/hh_optimass_parton
+EXESRC     := $(patsubst $(BINDIR)/%,$(SRCDIR)/%.cc,$(EXE))
+EXEOBJ     := $(EXESRC:.cc=.o)
+LIB        := $(LIBDIR)/libHHOM.a
+LIBSRC     := $(filter-out $(EXESRC),$(wildcard $(SRCDIR)/*.cc))
+LIBOBJ     := $(LIBSRC:.cc=.o)
+NOINSTHEAD := $(SRCDIR)/user_interface.h $(SRCDIR)/utils.h
+HEAD       := $(filter-out $(EXESRC:.cc=.h),\
+	$(filter-out $(NOINSTHEAD),$(wildcard $(SRCDIR)/*.h)))
 
 .PHONY: all debug build install clean
 
@@ -64,9 +66,9 @@ build:
 	$(MKDIR) $(BINDIR)
 
 install: all
-	install -d $(DESTDIR)/bin $(DESTDIR)/include/$(PKGNAME) $(DESTDIR)/lib
+	install -d $(DESTDIR)/bin $(DESTDIR)/lib $(DESTDIR)/include/$(PKGNAME)
 	install -s -m 755 $(EXE) $(DESTDIR)/bin
-	install $(LIB) $(SOLIB) $(DESTDIR)/lib
+	install $(LIB) $(DESTDIR)/lib
 	install -m 644 $(HEAD) $(DESTDIR)/include/$(PKGNAME)
 
 clean::
