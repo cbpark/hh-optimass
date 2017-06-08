@@ -7,7 +7,7 @@
 * [ROOT](https://root.cern.ch),
 * OptiMass/alm_base.
 
-Adjust `CLHEF` and `OPTIMASS` to their installation path in [`Makefile`](Makefile). For instance,
+Adjust `CLHEF` and `OPTIMASS` to their installation paths in [`Makefile`](Makefile). For instance,
 
 ```
 CLHEF=/clhef/path OPTIMASS=/optimass/path make
@@ -24,3 +24,12 @@ Assuming the input file is `input.lhe` and the file to save the output is `outpu
 ```
 
 `output.dat` is optional. If it is not supplied, the output will be displayed in the screen.
+
+It can also be installed by
+
+```
+make install DESTDIR=/some/where
+
+```
+
+Setting `PATH` or `LD_LIBRARY_PATH` is not necessary for using this. See the `install` target of [`Makefile`](Makefile).
