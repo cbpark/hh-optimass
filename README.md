@@ -14,3 +14,13 @@ CLHEF=/clhef/path OPTIMASS=/optimass/path make
 ```
 
 and check if `root-config` is in your `PATH`.
+
+## Usage
+
+Assuming the input file is `input.lhe` and the file to save the output is `output.dat`,
+
+```
+./bin/hh_optimass_parton input.lhe output.dat
+```
+
+`output.dat` is optional. If it is not supplied, the output will be displayed in the screen.
