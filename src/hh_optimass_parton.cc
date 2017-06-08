@@ -30,14 +30,14 @@ int main(int argc, char *argv[]) {
         message(appname, "reading `" + std::string(argv[1]) + "' ...", to_out);
     }
 
-#ifndef DEBUG
+#if !defined(DEBUG)
     gErrorIgnoreLevel = 1001;  // to make Minuit2 quiet
 #endif
 
     auto event{lhef::parseEvent(&fin)};
     for (int iev = 1; !event.done(); event = lhef::parseEvent(&fin), ++iev) {
         hhom::PartonLevel ps{event};
-#ifdef DEBUG
+#if DEBUG
         message(appname, "event (" + std::to_string(iev) + ")", to_out);
         cout << "-- b-l pairs:\n" << hhom::show(ps.bl_pairs()) << '\n';
         cout << "-- missing:\n" << lhef::show(ps.missing()) << '\n';
