@@ -61,14 +61,6 @@ lhef::Particle PartonLevel::utm() const {
     return lhef::sum(extra);
 }
 
-// BLPairs<lhef::Particle> PartonLevel::bl_swapped_pairs() const {
-//     BLSystem<lhef::Particle> bl1{bl_pairs_.first.bjet(),
-//                                  bl_pairs_.second.lepton()};
-//     BLSystem<lhef::Particle> bl2{bl_pairs_.second.bjet(),
-//                                  bl_pairs_.first.lepton()};
-//     return std::make_pair(bl1, bl2);
-// }
-
 std::string show(const BLSystem<lhef::Particle> &bl) {
     return "[" + lhef::show(bl.bjet()) + ", " + lhef::show(bl.lepton()) + "]";
 }
