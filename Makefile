@@ -4,9 +4,11 @@
 # Public License. See file LICENSE in the top directory of this project or
 # go to <http://www.gnu.org/licenses/> for full license details.
 
+PKGNAME  := hh-optimass
 SRCDIR   := src
 BINDIR   := bin
 LIBDIR   := lib
+DESTDIR  ?= /usr/local
 CXXFLAGS := -g -O2 -march=native -Wall -Wextra -std=c++11 -pedantic \
 	-I$(SRCDIR) $(CXXFLAGS)
 LDFLAGS  := -O2 $(LDFLAGS)
@@ -40,10 +42,14 @@ EXEOBJ := $(EXESRC:.cc=.o)
 LIB    := $(LIBDIR)/libHHOM.a
 LIBSRC := $(filter-out $(EXESRC),$(wildcard $(SRCDIR)/*.cc))
 LIBOBJ := $(LIBSRC:.cc=.o)
+HEAD   := $(filter-out $(EXESRC:.cc=.h),$(wildcard $(SRCDIR)/*.h))
 
-.PHONY: all build clean
+.PHONY: all debug build install clean
 
 all: $(EXE)
+
+debug: CXXFLAGS += -DDEBUG
+debug: all
 
 $(BINDIR)/%: $(SRCDIR)/%.o build $(LIB)
 	$(CXX) $(LDFLAGS) -o $@ $< $(LIB) $(LIBS)
@@ -56,6 +62,12 @@ $(LIB): $(LIBOBJ)
 build:
 	$(MKDIR) $(LIBDIR)
 	$(MKDIR) $(BINDIR)
+
+install: all
+	install -d $(DESTDIR)/bin $(DESTDIR)/include/$(PKGNAME) $(DESTDIR)/lib
+	install -s -m 755 $(EXE) $(DESTDIR)/bin
+	install $(LIB) $(SOLIB) $(DESTDIR)/lib
+	install -m 644 $(HEAD) $(DESTDIR)/include/$(PKGNAME)
 
 clean::
 	$(RM) $(EXEOBJ) $(LIBOBJ)
