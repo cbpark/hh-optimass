@@ -66,8 +66,10 @@ public:
     }
     BLPairs<P> bl_pairs() const { return bl_pairs_; }
     BLPairs<P> bl_swapped_pairs() const {
-        BLSystem<P> bl1{bl_pairs_.first.bjet(), bl_pairs_.second.lepton()};
-        BLSystem<P> bl2{bl_pairs_.second.bjet(), bl_pairs_.first.lepton()};
+        BLSystem<P> bl1, bl2;
+        if (!has_bl_pairs()) { return std::make_pair(bl1, bl2); }
+        bl1 = {bl_pairs_.first.bjet(), bl_pairs_.second.lepton()};
+        bl2 = {bl_pairs_.second.bjet(), bl_pairs_.first.lepton()};
         return std::make_pair(bl1, bl2);
     }
 };
