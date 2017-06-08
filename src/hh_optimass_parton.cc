@@ -8,6 +8,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <streambuf>
 #include <string>
 #include "TError.h"  // for gErrorIgnoreLevel
 #include "clhef/lhef.h"
@@ -20,8 +21,8 @@ using std::cout;
 const char appname[] = "hh_optimass_parton";
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) { return howToUse(appname, "<input>"); }
-    const auto to_out = &cout;  // information will be displayed in screen.
+    if (argc < 2 || argc > 3) { return howToUse(appname, "<input> [output]"); }
+    auto to_out = &cout;  // information will be displayed in screen.
 
     std::ifstream fin(argv[1]);
     if (fin.fail()) {
@@ -30,15 +31,29 @@ int main(int argc, char *argv[]) {
         message(appname, "reading `" + std::string(argv[1]) + "' ...", to_out);
     }
 
+    // prepare output
+    std::streambuf *buf;
+    std::ofstream of;
+    bool has_output = argc == 3;
+    if (has_output) {
+        of.open(argv[2]);
+        buf = of.rdbuf();
+    } else {
+        buf = cout.rdbuf();
+    }
+    std::ostream out(buf);
+
 #if !defined(DEBUG)
     gErrorIgnoreLevel = 1001;  // to make Minuit2 quiet
 #endif
 
     auto event{lhef::parseEvent(&fin)};
-    for (int iev = 1; !event.done(); event = lhef::parseEvent(&fin), ++iev) {
+    int nev = 0;
+    for (; !event.done(); event = lhef::parseEvent(&fin)) {
+        printProgress(appname, ++nev, to_out);
         hhom::PartonLevel ps{event};
 #if DEBUG
-        message(appname, "event (" + std::to_string(iev) + ")", to_out);
+        message(appname, "event (" + std::to_string(nev) + ")", to_out);
         cout << "-- b-l pairs:\n" << hhom::show(ps.bl_pairs()) << '\n';
         cout << "-- missing:\n" << lhef::show(ps.missing()) << '\n';
 #endif
@@ -46,6 +61,16 @@ int main(int argc, char *argv[]) {
 
         hhom::OptiMassResult om = hhom::calcOptiMassHH<lhef::Particle>(ps);
         // hhom::OptiMassResult om{hhom::calcOptiMassTTbar<lhef::Particle>(ps)};
-        cout << om << '\n';
+        out << om << '\n';
+    }
+
+    message(appname, "... done.", to_out);
+    message(appname,
+            "total " + std::to_string(nev) + " events have been processed.",
+            to_out);
+    if (has_output) {
+        message(appname,
+                "the output has been saved to `" + std::string(argv[2]) + "'.",
+                to_out);
     }
 }

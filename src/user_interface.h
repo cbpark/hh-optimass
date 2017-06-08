@@ -9,7 +9,9 @@
 #ifndef SRC_USER_INTERFACE_H_
 #define SRC_USER_INTERFACE_H_
 
+#include <fstream>
 #include <iostream>
+#include <streambuf>
 #include <string>
 
 int howToUse(const std::string &appname, const std::string &usage) {
@@ -25,6 +27,13 @@ int failToRead(const std::string &appname, const std::string &fname) {
 void message(const std::string &appname, const std::string &msg,
              std::ostream *out) {
     *out << appname << ": " << msg << '\n';
+}
+
+void printProgress(const std::string &appname, const int &n,
+                   std::ostream *out) {
+    if (n % 1000 == 0) {
+        *out << appname << ": " << std::to_string(n) << " events parsed.\n";
+    }
 }
 
 #endif  // SRC_USER_INTERFACE_H_
