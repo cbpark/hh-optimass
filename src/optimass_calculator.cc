@@ -33,8 +33,8 @@ void initOptiMass(const FinalStates<P> &final_states,
                   OptiMass::MassMinimizer *optm) {
     optm->InitContainers();
 
-    const BLPairs<P> bl_pairs = final_states.bl_pairs();
-    const BLSystem<P> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
+    const BLPairs<P> bl_pairs{final_states.bl_pairs()};
+    const BLSystem<P> bl1{bl_pairs.first}, bl2{bl_pairs.second};
     optm->SetMomentumValue("b1_x", bl1.bjet().px());
     optm->SetMomentumValue("b1_y", bl1.bjet().py());
     optm->SetMomentumValue("b1_z", bl1.bjet().pz());
@@ -52,7 +52,7 @@ void initOptiMass(const FinalStates<P> &final_states,
     optm->SetMomentumValue("e2_z", bl2.lepton().pz());
     optm->SetMomentumValue("e2_m", bl2.lepton().mass());
 
-    const auto met = final_states.missing();
+    const P met{final_states.missing()};
     optm->SetInvisibleSubsystemMomenta(0, met.px(), met.py());
     optm->SetInitInvisibleMomentum("v1_m", 0.);
     optm->SetInitInvisibleMomentum("v2_m", 0.);
@@ -62,15 +62,16 @@ OptiMassResult getOptiMassResult(OptiMass::MassMinimizer *optm,
                                  const OptiMass::ALMController &alm_controller,
                                  const std::string &sys_name) {
     OptiMass::ProcessTree &process_tree = optm->GetProcessTree();
-    const double om = process_tree.GetSubsystemMass(sys_name);
-    const double cd = alm_controller.GetSumSquaredConstraints();
+    double om = process_tree.GetSubsystemMass(sys_name);
+    double cd = alm_controller.GetSumSquaredConstraints();
     Convergence cvg = Convergence::NotConverged;
     if (cd <= ETAS) { cvg = Convergence::Converged; }
-    return OptiMassResult{om, cd, cvg};
+    return {om, cd, cvg};
 }
 
 template <typename P>
 OptiMassResult calcOptiMassHH(const FinalStates<P> &final_states) {
+    // return an empty result if the final states do not contain b-lepton pairs.
     if (!final_states.has_bl_pairs()) { return OptiMassResult(); }
 
     OptiMass::MassMinimizer *optm = new OptiMass::hh_minH();
