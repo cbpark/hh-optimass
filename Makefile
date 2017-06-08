@@ -43,8 +43,8 @@ LIB        := $(LIBDIR)/libHHOM.a
 LIBSRC     := $(filter-out $(EXESRC),$(wildcard $(SRCDIR)/*.cc))
 LIBOBJ     := $(LIBSRC:.cc=.o)
 NOINSTHEAD := $(SRCDIR)/user_interface.h $(SRCDIR)/utils.h
-HEAD       := $(filter-out $(EXESRC:.cc=.h),\
-	$(filter-out $(NOINSTHEAD),$(wildcard $(SRCDIR)/*.h)))
+NOINSTHEAD += $(EXESRC:.cc=.h)
+HEAD       := $(filter-out $(NOINSTHEAD),$(wildcard $(SRCDIR)/*.h))
 
 .PHONY: all debug build install clean
 
