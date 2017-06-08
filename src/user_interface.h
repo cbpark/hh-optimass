@@ -29,10 +29,10 @@ void message(const std::string &appname, const std::string &msg,
     *out << appname << ": " << msg << '\n';
 }
 
-void printProgress(const std::string &appname, const int &n,
+void printProgress(const std::string &appname, const int how_many, const int n,
                    std::ostream *out) {
-    if (n % 1000 == 0) {
-        *out << appname << ": " << std::to_string(n) << " events parsed.\n";
+    if (n % how_many == 0) {
+        message(appname, std::to_string(n) + " events parsed.", out);
     }
 }
 

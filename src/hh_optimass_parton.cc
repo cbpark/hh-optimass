@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
     auto event{lhef::parseEvent(&fin)};
     int nev = 0;
     for (; !event.done(); event = lhef::parseEvent(&fin)) {
-        printProgress(appname, ++nev, to_out);
+        printProgress(appname, 1000, ++nev, to_out);
         hhom::PartonLevel ps{event};
 #if DEBUG
         message(appname, "event (" + std::to_string(nev) + ")", to_out);
