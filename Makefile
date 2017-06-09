@@ -17,11 +17,11 @@ AR       := ar crs
 MKDIR    := mkdir -p
 RM       := rm -f
 
-# CLHEF (https://github.com/cbpark/CLHEF)
-CLHEF    ?= /usr/local
-CXXFLAGS += -I$(CLHEF)/include
-LDFLAGS  += -Wl,-rpath,$(CLHEF)/lib
-LIBS     += -L$(CLHEF)/lib -lCLHEF
+# colevent (https://github.com/cbpark/colevent)
+COLEVENT ?= /usr/local
+CXXFLAGS += -I$(COLEVENT)/include/colevent
+LDFLAGS  += -Wl,-rpath,$(COLEVENT)/lib
+LIBS     += -L$(COLEVENT)/lib -lcolevent
 
 # OptiMass/alm_base
 OPTIMASS ?= /usr/local

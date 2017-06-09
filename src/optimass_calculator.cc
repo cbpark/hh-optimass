@@ -14,9 +14,9 @@
 #include "alm_base/ALMController.h"
 #include "alm_base/MassMinimizer.h"
 #include "alm_base/ProcessTree.h"
-#include "clhef/lhef.h"
 #include "final_states.h"
 #include "hh_minH.h"
+#include "lhef/lhef.h"
 
 namespace hhom {
 std::ostream &operator<<(std::ostream &os, const OptiMassResult &re) {

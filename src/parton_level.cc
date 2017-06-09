@@ -9,7 +9,7 @@
 #include "parton_level.h"
 #include <string>
 #include <utility>
-#include "clhef/lhef.h"
+#include "lhef/lhef.h"
 
 namespace hhom {
 bool valid(const lhef::Particles &ps) {

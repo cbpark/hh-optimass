@@ -10,8 +10,8 @@
 #define SRC_PARTON_LEVEL_H_
 
 #include <string>
-#include "clhef/lhef.h"
 #include "final_states.h"
+#include "lhef/lhef.h"
 
 namespace hhom {
 BLPairs<lhef::Particle> pairing(const lhef::Particles &bs,

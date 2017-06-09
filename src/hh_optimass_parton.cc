@@ -12,7 +12,7 @@
 #include <streambuf>
 #include <string>
 #include "TError.h"  // for gErrorIgnoreLevel
-#include "clhef/lhef.h"
+#include "lhef/lhef.h"
 #include "optimass_calculator.h"
 #include "parton_level.h"
 #include "user_interface.h"
