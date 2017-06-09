@@ -29,7 +29,6 @@ It can also be installed by
 
 ```
 make install DESTDIR=/some/where
-
 ```
 
 Setting `PATH` or `LD_LIBRARY_PATH` is not necessary for using this. See the `install` target of [`Makefile`](Makefile).
