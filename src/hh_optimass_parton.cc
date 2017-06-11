@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
         buf = cout.rdbuf();
     }
     std::ostream out(buf);
+    out << header() << '\n';
 
 #if !defined(DEBUG)
     gErrorIgnoreLevel = 1001;  // to make Minuit2 quiet

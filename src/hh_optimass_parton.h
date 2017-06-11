@@ -24,4 +24,10 @@ void printEvent(const std::string &appname, const hhom::PartonLevel &ps,
     *out << "-- utm:\n" << lhef::show(ps.utm()) << '\n';
 }
 
+std::string header() {
+    std::string hd = "# ";
+    hd += "mhh_om, cd, cvg";
+    return hd;
+}
+
 #endif  // SRC_HH_OPTIMASS_PARTON_H_

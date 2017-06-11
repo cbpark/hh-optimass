@@ -22,8 +22,8 @@ namespace hhom {
 std::ostream &operator<<(std::ostream &os, const OptiMassResult &re) {
     using namespace std;
 
-    os << right << fixed << setw(10) << setprecision(3) << re.mass_ << setw(11)
-       << setprecision(5) << re.sum_constraints_ << setw(5)
+    os << right << fixed << setw(9) << setprecision(3) << re.mass_ << setw(10)
+       << setprecision(5) << re.sum_constraints_ << setw(4)
        << static_cast<int>(re.cvg_);
     return os;
 }
