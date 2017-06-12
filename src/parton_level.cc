@@ -7,6 +7,8 @@
  */
 
 #include "parton_level.h"
+#include <iomanip>
+#include <ostream>
 #include <string>
 #include <utility>
 #include "lhef/lhef.h"
@@ -40,20 +42,7 @@ BLPairs<lhef::Particle> pairing(const lhef::Particles &bs,
     return std::make_pair(bl1, bl2);
 }
 
-lhef::Particles PartonLevel::bjets() const {
-    return lhef::selectByID(lhef::Bottom, final_states_);
-}
-
-lhef::Particles PartonLevel::leptons() const {
-    return lhef::selectByID(lhef::LeptonIso, final_states_);
-}
-
-lhef::Particle PartonLevel::missing() const {
-    lhef::Particles neus = lhef::selectByID(lhef::Neutrino, final_states_);
-    return lhef::sum(neus);
-}
-
-lhef::Particle PartonLevel::utm() const {
+lhef::Particle PartonLevelData::utm() const {
     lhef::ParticleID b_l_neu;
     b_l_neu.insert(b_l_neu.end(), lhef::Bottom.cbegin(), lhef::Bottom.cend());
     b_l_neu.insert(b_l_neu.end(), lhef::LeptonIso.cbegin(),
@@ -64,25 +53,41 @@ lhef::Particle PartonLevel::utm() const {
     return lhef::sum(extra);
 }
 
-std::string show(const BLSystem<lhef::Particle> &bl) {
-    return "[" + lhef::show(bl.bjet()) + ", " + lhef::show(bl.lepton()) + "]";
-}
+double mT2_bbll(const PartonLevelData &final_states) {
+    if (!final_states.has_bl_pairs()) { return 0; }
 
-std::string show(const BLPairs<lhef::Particle> &bl_pairs) {
-    const BLSystem<lhef::Particle> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
-    return show(bl1) + "\n" + show(bl2);
-}
-
-double mT2(const BLPairs<lhef::Particle> &bl_pairs,
-           const lhef::Particle &missing, const double m_x) {
-    BLSystem<lhef::Particle> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
-    lhef::Particle bl1_total = lhef::sum({bl1.bjet(), bl1.lepton()}),
-                   bl2_total = lhef::sum({bl2.bjet(), bl2.lepton()});
+    const lhef::Particle met{final_states.missing()};
+    const double m_invisible = 0;
+    auto mT2_ = [&met, m_invisible](const BLPairs<lhef::Particle> &bl_pairs) {
+        BLSystem<lhef::Particle> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
+        lhef::Particle sum_bl1 = lhef::sum({bl1.bjet(), bl1.lepton()}),
+                       sum_bl2 = lhef::sum({bl2.bjet(), bl2.lepton()});
 #if DEBUG
-    std::cout << "bl1_total: " << bl1_total << '\n'
-              << "bl2_total: " << bl2_total << '\n';
+        std::cout << "sum(b, l) (1): " << sum_bl1 << '\n'
+                  << "sum(b, l) (2): " << sum_bl2 << '\n';
 #endif
-    return lhef::mT2(bl1_total, bl2_total, missing.px(), missing.py(), m_x, m_x,
-                     false);
+        return lhef::mT2(sum_bl1, sum_bl2, met.px(), met.py(), m_invisible,
+                         m_invisible, false);
+    };
+
+    double mT2_pair[2] = {mT2_(final_states.bl_pairs()),
+                          mT2_(final_states.bl_swapped_pairs())};
+
+    return std::min(mT2_pair[0], mT2_pair[1]);
+}
+
+void PartonLevelAnalysis::calc_variables(const PartonLevelData &ps) {
+    lhef::Particles met{ps.missing()};
+    mhh_ = lhef::invariantMass({ps.bjets(), ps.leptons(), met});
+    mT2_bbll_ = mT2_bbll(ps);
+}
+
+std::ostream &operator<<(std::ostream &os, const PartonLevelAnalysis &r) {
+    using namespace std;
+
+    os << r.om_;
+    os << right << fixed << setw(10) << setprecision(3) << r.mhh_ << setw(10)
+       << setprecision(3) << r.mT2_bbll_;
+    return os;
 }
 }  // namespace hhom

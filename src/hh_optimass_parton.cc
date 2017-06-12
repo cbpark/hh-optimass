@@ -15,7 +15,6 @@
 #include "lhef/lhef.h"
 #include "parton_level.h"
 #include "user_interface.h"
-#include "variables.h"
 
 using std::cout;
 
@@ -53,13 +52,13 @@ int main(int argc, char *argv[]) {
     int nev = 0;
     for (; !event.done(); event = lhef::parseEvent(&fin)) {
         printProgress(appname, 1000, ++nev, to_out);
-        hhom::PartonLevel ps{event};
+        hhom::PartonLevelData ps{event};
 #if DEBUG
         printEvent(appname, ps, nev, to_out);
 #endif
         if (!ps.has_bl_pairs()) { continue; }
 
-        auto result = hhom::PartonLevelResult(ps);
+        auto result = hhom::PartonLevelAnalysis(ps);
         out << result << '\n';
     }
 

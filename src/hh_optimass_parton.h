@@ -14,7 +14,7 @@
 #include "parton_level.h"
 #include "user_interface.h"
 
-void printEvent(const std::string &appname, const hhom::PartonLevel &ps,
+void printEvent(const std::string &appname, const hhom::PartonLevelData &ps,
                 const int nev, std::ostream *out) {
     message(appname, "event (" + std::to_string(nev) + ")", out);
     *out << "-- b-l pairs:\n" << hhom::show(ps.bl_pairs()) << '\n';

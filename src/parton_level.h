@@ -9,33 +9,68 @@
 #ifndef SRC_PARTON_LEVEL_H_
 #define SRC_PARTON_LEVEL_H_
 
+#include <ostream>
 #include <string>
 #include "final_states.h"
 #include "lhef/lhef.h"
+#include "optimass_calculator.h"
 
 namespace hhom {
 BLPairs<lhef::Particle> pairing(const lhef::Particles &bs,
                                 const lhef::Particles &ls);
 
-class PartonLevel : public FinalStates<lhef::Particle> {
+class PartonLevelData : public FinalStates<lhef::Particle> {
 public:
-    PartonLevel() = delete;
-    explicit PartonLevel(const lhef::Event &e)
+    PartonLevelData() = delete;
+    explicit PartonLevelData(const lhef::Event &e)
         : FinalStates<lhef::Particle>{lhef::finalStates(e)} {
         bl_pairs_ = pairing(bjets(), leptons());
     }
 
-    lhef::Particles bjets() const override;
-    lhef::Particles leptons() const override;
-    lhef::Particle missing() const override;
+    lhef::Particles bjets() const override {
+        return lhef::selectByID(lhef::Bottom, final_states_);
+    }
+
+    lhef::Particles leptons() const override {
+        return lhef::selectByID(lhef::LeptonIso, final_states_);
+    }
+
+    lhef::Particle missing() const override {
+        lhef::Particles neus = lhef::selectByID(lhef::Neutrino, final_states_);
+        return lhef::sum(neus);
+    }
+
     lhef::Particle utm() const override;
 };
 
-std::string show(const BLSystem<lhef::Particle> &bl);
-std::string show(const BLPairs<lhef::Particle> &bl_pairs);
+inline std::string show(const BLSystem<lhef::Particle> &bl) {
+    return "[" + lhef::show(bl.bjet()) + ", " + lhef::show(bl.lepton()) + "]";
+}
 
-double mT2(const BLPairs<lhef::Particle> &bl_pairs,
-           const lhef::Particle &missing, const double m_x);
+inline std::string show(const BLPairs<lhef::Particle> &bl_pairs) {
+    BLSystem<lhef::Particle> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
+    return show(bl1) + "\n" + show(bl2);
+}
+
+class PartonLevelAnalysis {
+private:
+    OptiMassResult om_;
+    double mhh_ = 0;
+    double mT2_bbll_ = 0;
+
+public:
+    PartonLevelAnalysis() = delete;
+    PartonLevelAnalysis(const PartonLevelData &ps)
+        : om_{calcOptiMassHH<lhef::Particle>(ps)} {
+        calc_variables(ps);
+    }
+
+    friend std::ostream &operator<<(std::ostream &os,
+                                    const PartonLevelAnalysis &re);
+
+private:
+    void calc_variables(const PartonLevelData &ps);
+};
 }  // namespace hhom
 
 #endif  // SRC_PARTON_LEVEL_H_
