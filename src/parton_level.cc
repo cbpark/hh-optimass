@@ -10,6 +10,9 @@
 #include <string>
 #include <utility>
 #include "lhef/lhef.h"
+#if DEBUG
+#include <iostream>
+#endif
 
 namespace hhom {
 bool valid(const lhef::Particles &ps) {
@@ -68,5 +71,18 @@ std::string show(const BLSystem<lhef::Particle> &bl) {
 std::string show(const BLPairs<lhef::Particle> &bl_pairs) {
     const BLSystem<lhef::Particle> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
     return show(bl1) + "\n" + show(bl2);
+}
+
+double mT2(const BLPairs<lhef::Particle> &bl_pairs,
+           const lhef::Particle &missing, const double m_x) {
+    BLSystem<lhef::Particle> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
+    lhef::Particle bl1_total = lhef::sum({bl1.bjet(), bl1.lepton()}),
+                   bl2_total = lhef::sum({bl2.bjet(), bl2.lepton()});
+#if DEBUG
+    std::cout << "bl1_total: " << bl1_total << '\n'
+              << "bl2_total: " << bl2_total << '\n';
+#endif
+    return lhef::mT2(bl1_total, bl2_total, missing.px(), missing.py(), m_x, m_x,
+                     false);
 }
 }  // namespace hhom

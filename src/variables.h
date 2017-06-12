@@ -19,6 +19,7 @@ class PartonLevelResult {
 private:
     OptiMassResult om_;
     double mhh_ = 0;
+    double mT2_bbll_ = 0;
 
 public:
     PartonLevelResult() = delete;

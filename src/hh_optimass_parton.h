@@ -26,7 +26,7 @@ void printEvent(const std::string &appname, const hhom::PartonLevel &ps,
 
 std::string header() {
     std::string hd = "# ";
-    hd += "mhh_om, cd, cvg, mhh";
+    hd += "mhh_om, cd, cvg, mhh, mT2_bbll";
     return hd;
 }
 

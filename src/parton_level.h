@@ -33,6 +33,9 @@ public:
 
 std::string show(const BLSystem<lhef::Particle> &bl);
 std::string show(const BLPairs<lhef::Particle> &bl_pairs);
+
+double mT2(const BLPairs<lhef::Particle> &bl_pairs,
+           const lhef::Particle &missing, const double m_x);
 }  // namespace hhom
 
 #endif  // SRC_PARTON_LEVEL_H_
