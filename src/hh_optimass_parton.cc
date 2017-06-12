@@ -13,9 +13,9 @@
 #include <string>
 #include "TError.h"  // for gErrorIgnoreLevel
 #include "lhef/lhef.h"
-#include "optimass_calculator.h"
 #include "parton_level.h"
 #include "user_interface.h"
+#include "variables.h"
 
 using std::cout;
 
@@ -59,9 +59,8 @@ int main(int argc, char *argv[]) {
 #endif
         if (!ps.has_bl_pairs()) { continue; }
 
-        hhom::OptiMassResult om = hhom::calcOptiMassHH<lhef::Particle>(ps);
-        // hhom::OptiMassResult om{hhom::calcOptiMassTTbar<lhef::Particle>(ps)};
-        out << om << '\n';
+        auto result = hhom::PartonLevelResult(ps);
+        out << result << '\n';
     }
 
     message(appname, "... done.", to_out);
