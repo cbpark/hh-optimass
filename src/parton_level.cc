@@ -11,10 +11,8 @@
 #include <ostream>
 #include <string>
 #include <utility>
+#include "colevent_constants.h"
 #include "lhef/lhef.h"
-#if DEBUG
-#include <iostream>
-#endif
 
 namespace hhom {
 bool valid(const lhef::Particles &ps) {
@@ -53,41 +51,59 @@ lhef::Particle PartonLevelData::utm() const {
     return lhef::sum(extra);
 }
 
-double mT2_bbll(const PartonLevelData &final_states) {
-    if (!final_states.has_bl_pairs()) { return 0; }
+double PartonLevelAnalysis::mT2_bbll(const PartonLevelData &ps,
+                                     const lhef::Particle &missing) {
+    if (!ps.has_bl_pairs()) { return 0; }
 
-    const lhef::Particle met{final_states.missing()};
     const double m_invisible = 0;
-    auto mT2_ = [&met, m_invisible](const BLPairs<lhef::Particle> &bl_pairs) {
+    auto mT2_ = [&missing,
+                 m_invisible](const BLPairs<lhef::Particle> &bl_pairs) {
         BLSystem<lhef::Particle> bl1 = bl_pairs.first, bl2 = bl_pairs.second;
         lhef::Particle sum_bl1 = lhef::sum({bl1.bjet(), bl1.lepton()}),
                        sum_bl2 = lhef::sum({bl2.bjet(), bl2.lepton()});
-#if DEBUG
-        std::cout << "sum(b, l) (1): " << sum_bl1 << '\n'
-                  << "sum(b, l) (2): " << sum_bl2 << '\n';
-#endif
-        return lhef::mT2(sum_bl1, sum_bl2, met.px(), met.py(), m_invisible,
-                         m_invisible, false);
+        return lhef::mT2(sum_bl1, sum_bl2, missing.px(), missing.py(),
+                         m_invisible, m_invisible, false);
     };
 
-    double mT2_pair[2] = {mT2_(final_states.bl_pairs()),
-                          mT2_(final_states.bl_swapped_pairs())};
-
+    double mT2_pair[2] = {mT2_(ps.bl_pairs()), mT2_(ps.bl_swapped_pairs())};
     return std::min(mT2_pair[0], mT2_pair[1]);
 }
 
-void PartonLevelAnalysis::calc_variables(const PartonLevelData &ps) {
-    lhef::Particles met{ps.missing()};
-    mhh_ = lhef::invariantMass({ps.bjets(), ps.leptons(), met});
-    mT2_bbll_ = mT2_bbll(ps);
+double mT2_ll(const lhef::Particles &leptons, const lhef::Particle &missing) {
+    if (leptons.size() != 2) { return 0; }
+    const double m_invisible = 0;
+    return lhef::mT2(leptons.front(), leptons.back(), missing.px(),
+                     missing.py(), m_invisible, m_invisible, false);
+}
+
+double dphi_ll(const lhef::Particles &leptons) {
+    if (leptons.size() != 2) { return colevent::TWOPI; }
+    return lhef::deltaPhi(leptons.front(), leptons.back());
+}
+
+double dR_ll(const lhef::Particles &leptons) {
+    if (leptons.size() != 2) { return 0; }
+    return lhef::deltaR(leptons.front(), leptons.back());
+}
+
+void PartonLevelAnalysis::calc_variables(const lhef::Particles &bjets,
+                                         const lhef::Particles &leptons,
+                                         const lhef::Particle &missing) {
+    mhh_ = lhef::invariantMass({bjets, leptons, {missing}});
+    mT2_ll_ = mT2_ll(leptons, missing);
+    dphi_ll_ = dphi_ll(leptons);
+    dR_ll_ = dR_ll(leptons);
+    met_ = missing.pt();
 }
 
 std::ostream &operator<<(std::ostream &os, const PartonLevelAnalysis &r) {
     using namespace std;
 
     os << r.om_;
-    os << right << fixed << setw(10) << setprecision(3) << r.mhh_ << setw(10)
-       << setprecision(3) << r.mT2_bbll_;
+    os << right << fixed << setw(11) << setprecision(3) << r.mhh_ << setw(10)
+       << setprecision(3) << r.mT2_bbll_ << setw(9) << r.mT2_ll_ << setw(11)
+       << setprecision(6) << r.dphi_ll_ << setw(10) << r.dR_ll_ << setw(10)
+       << setprecision(3) << r.met_ << setw(9) << r.utm_;
     return os;
 }
 }  // namespace hhom

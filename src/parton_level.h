@@ -55,21 +55,29 @@ inline std::string show(const BLPairs<lhef::Particle> &bl_pairs) {
 class PartonLevelAnalysis {
 private:
     OptiMassResult om_;
-    double mhh_ = 0;
-    double mT2_bbll_ = 0;
+    double utm_;
+    double mhh_;
+    double mT2_bbll_, mT2_ll_;
+    double dphi_ll_, dR_ll_;
+    double met_;
 
 public:
     PartonLevelAnalysis() = delete;
     PartonLevelAnalysis(const PartonLevelData &ps)
-        : om_{calcOptiMassHH<lhef::Particle>(ps)} {
-        calc_variables(ps);
+        : om_{calcOptiMassHH<lhef::Particle>(ps)}, utm_(ps.utm().pt()) {
+        const lhef::Particle missing{ps.missing()};
+        mT2_bbll_ = mT2_bbll(ps, missing);
+        calc_variables(ps.bjets(), ps.leptons(), missing);
     }
 
     friend std::ostream &operator<<(std::ostream &os,
                                     const PartonLevelAnalysis &re);
 
 private:
-    void calc_variables(const PartonLevelData &ps);
+    double mT2_bbll(const PartonLevelData &ps, const lhef::Particle &missing);
+    void calc_variables(const lhef::Particles &bjets,
+                        const lhef::Particles &leptons,
+                        const lhef::Particle &missing);
 };
 }  // namespace hhom
 

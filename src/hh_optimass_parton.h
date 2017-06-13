@@ -24,9 +24,21 @@ void printEvent(const std::string &appname, const hhom::PartonLevelData &ps,
     *out << "-- utm:\n" << lhef::show(ps.utm()) << '\n';
 }
 
+/*
+ *  See `PartonLevelAnalysis` in `src/parton_level.h`.
+ */
 std::string header() {
-    std::string hd = "# ";
-    hd += "mhh_om, cd, cvg, mhh, mT2_bbll";
+    std::string hd = "#";
+    hd += "  mhh_om";
+    hd += "     cd";
+    hd += "        cvg";
+    hd += "  mhh";
+    hd += "       MT2_bbll";
+    hd += "  MT2_ll";
+    hd += "  dphi_ll";
+    hd += "    dR_ll";
+    hd += "      MET";
+    hd += "        pT_utm";
     return hd;
 }
 

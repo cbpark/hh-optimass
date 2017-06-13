@@ -10,10 +10,10 @@
 #define SRC_CONSTANTS_H_
 
 namespace hhom {
-const double MH = 125.0;
-const double MW = 80.419;
-const double MB = 4.7;
-const double MT = 173.0;
+constexpr double MH = 125.0;
+constexpr double MW = 80.419;
+constexpr double MB = 4.7;
+constexpr double MT = 173.0;
 }  // namespace hhom
 
 #endif  // SRC_CONSTANTS_H_
