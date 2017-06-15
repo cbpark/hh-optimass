@@ -32,7 +32,7 @@ void message(const std::string &appname, const std::string &msg,
 void printProgress(const std::string &appname, const int how_many, const int n,
                    std::ostream *out) {
     if (n % how_many == 0) {
-        message(appname, std::to_string(n) + " events parsed.", out);
+        message(appname, std::to_string(n) + " events processed.", out);
     }
 }
 
