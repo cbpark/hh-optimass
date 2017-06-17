@@ -41,7 +41,8 @@ std::unique_ptr<TCanvas> mkCanvas(const char *name, const int dim) {
     return canvas;
 }
 
-void setHist(std::shared_ptr<TH1> hist) {
+void setHist(std::shared_ptr<TH1> hist, const char *title_x = "",
+             const char *title_y = "") {
     hist->GetXaxis()->CenterTitle();
     hist->GetYaxis()->CenterTitle();
     hist->SetTitle("");
@@ -50,6 +51,8 @@ void setHist(std::shared_ptr<TH1> hist) {
     hist->SetTitleSize(1.4 * hist->GetLabelSize(), "xy");
     hist->SetTitleFont(FONT, "xy");
     hist->SetLabelFont(FONT, "xy");
+    hist->SetXTitle(title_x);
+    hist->SetYTitle(title_y);
 }
 
 std::shared_ptr<TLatex> mkText() {

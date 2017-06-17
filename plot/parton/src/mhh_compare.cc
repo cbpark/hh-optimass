@@ -16,6 +16,8 @@
 using namespace std;
 
 const char appname[] = "mhh_compare";
+const char title_x[] = "m_{hh} (GeV)";
+const char title_y[] = "normalized";
 
 int fillHist(unique_ptr<ifstream> fin, shared_ptr<TH1> hist1,
              shared_ptr<TH1> hist2);
@@ -33,13 +35,11 @@ int main(int argc, char *argv[]) {
 
     // Histogram.
     auto hist1 = make_shared<TH1D>("hh_true", "", nbin, bin.first, bin.second);
-    setHist(hist1);
+    setHist(hist1, title_x, title_y);
     hist1->SetLineColor(kBlack);
-    hist1->SetXTitle("m_{hh} (GeV)");
-    hist1->SetYTitle("normalized");
 
     auto hist2 = make_shared<TH1D>("hh_om", "", nbin, bin.first, bin.second);
-    setHist(hist2);
+    setHist(hist2, title_x, title_y);
     hist2->SetLineColor(kBlue);
     hist2->SetLineStyle(2);
 

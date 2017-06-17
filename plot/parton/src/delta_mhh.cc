@@ -16,10 +16,11 @@
 using namespace std;
 
 const char appname[] = "delta_mhh";
+const char title_x[] = "(m_{hh}^{OM} - m_{hh}) / m_{hh}";
+const char title_y[] = "normalized";
 
 int main(int argc, char *argv[]) {
     if (argc != 3) { return howToUse(appname, "<hh> <output>"); }
-
     auto fin = unique_ptr<ifstream>(new ifstream(argv[1]));
     if (fin->fail()) { return failedToRead(appname, argv[1]); }
 
@@ -31,10 +32,8 @@ int main(int argc, char *argv[]) {
 
     // Histogram.
     auto hist = make_shared<TH1D>("hh", "", nbin, bin.first, bin.second);
-    setHist(hist);
+    setHist(hist, title_x, title_y);
     hist->SetLineColor(kBlack);
-    hist->SetXTitle("(m_{hh}^{OM} - m_{hh}) / m_{hh}");
-    hist->SetYTitle("normalized");
 
     // Fill and draw histogram
     const int nev = fillHist(move(fin), hist);

@@ -9,16 +9,18 @@
 #include <iostream>
 #include <memory>
 #include <sstream>
+#include <utility>
 #include "TH1D.h"
 #include "common.h"
 
 using namespace std;
 
 const char appname[] = "mT2_ll";
+const char title_x[] = "M_{T2}^{ll} (GeV)";
+const char title_y[] = "normalized";
 
 int main(int argc, char *argv[]) {
     if (argc != 4) { return howToUse(appname, "<hh> <ttbar> <output>"); }
-
     auto fin_hh = unique_ptr<ifstream>(new ifstream(argv[1]));
     if (fin_hh->fail()) { return failedToRead(appname, argv[1]); }
     auto fin_tt = unique_ptr<ifstream>(new ifstream(argv[2]));
@@ -32,13 +34,11 @@ int main(int argc, char *argv[]) {
 
     // Histogram.
     auto hist_hh = make_shared<TH1D>("hh", "", nbin, bin.first, bin.second);
-    setHist(hist_hh);
+    setHist(hist_hh, title_x, title_y);
     hist_hh->SetLineColor(kBlack);
-    hist_hh->SetXTitle("M_{T2}^{ll} (GeV)");
-    hist_hh->SetYTitle("normalized");
 
     auto hist_tt = make_shared<TH1D>("ttbar", "", nbin, bin.first, bin.second);
-    setHist(hist_tt);
+    setHist(hist_tt, title_x, title_y);
     hist_tt->SetLineColor(kRed);
     hist_tt->SetLineStyle(2);
 

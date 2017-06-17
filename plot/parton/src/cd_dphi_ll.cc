@@ -17,6 +17,8 @@
 using namespace std;
 
 const char appname[] = "cd_dphi_ll";
+const char title_x[] = "compatibility distance (GeV)";
+const char title_y[] = "|#Delta#phi_{ll}|";
 
 int fillHist2D(unique_ptr<ifstream> fin, shared_ptr<TH2> hist);
 
@@ -30,9 +32,7 @@ int main(int argc, char *argv[]) {
 
     // Histogram.
     auto hist = make_shared<TH2D>("hist", "", 50, 0, 250, 50, 0, TMath::Pi());
-    setHist(hist);
-    hist->SetXTitle("compatibility distance (GeV)");
-    hist->SetYTitle("|#Delta#phi_{ll}|");
+    setHist(hist, title_x, title_y);
 
     // Fill and draw histogram
     int nev = fillHist2D(move(fin), hist);
