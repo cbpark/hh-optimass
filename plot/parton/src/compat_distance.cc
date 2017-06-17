@@ -45,18 +45,21 @@ int main(int argc, char *argv[]) {
     hist_tt->SetLineStyle(2);
 
     // Fill and draw histogram
+    const int nev2 = fillHist(move(fin_tt), hist_tt);
+    hist_tt->DrawNormalized();
+
     const int nev1 = fillHist(move(fin_hh), hist_hh);
     // hist_hh->SetAxisRange(0, 5000, "Y");
-    hist_hh->DrawNormalized();
-
-    const int nev2 = fillHist(move(fin_tt), hist_tt);
-    hist_tt->DrawNormalized("SAME");
+    hist_hh->DrawNormalized("SAME");
     cout << "-- Number of events = (" << nev1 << ", " << nev2 << ")\n";
 
     auto legend = mkLegend(0.7, 0.75, 1.0, 0.85);
     legend->AddEntry("hh", " hh");
     legend->AddEntry("ttbar", " t#bar{t}");
     legend->Draw();
+
+    auto info = mkText();
+    info->DrawLatex(0.74, 0.92, "model: t#bar{t}");
 
     canvas->SaveAs(argv[3]);
 }

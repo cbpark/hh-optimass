@@ -64,7 +64,7 @@ private:
 public:
     PartonLevelAnalysis() = delete;
     PartonLevelAnalysis(const PartonLevelData &ps)
-        : om_{calcOptiMassHH<lhef::Particle>(ps)}, utm_(ps.utm().pt()) {
+        : om_{calcOptiMassTTbar<lhef::Particle>(ps)}, utm_(ps.utm().pt()) {
         const lhef::Particle missing{ps.missing()};
         mT2_bbll_ = mT2_bbll(ps, missing);
         calc_variables(ps.bjets(), ps.leptons(), missing);
