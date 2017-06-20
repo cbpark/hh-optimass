@@ -58,6 +58,9 @@ int main(int argc, char *argv[]) {
     legend->AddEntry("ttbar", " t#bar{t}");
     legend->Draw();
 
+    auto info = mkText();
+    info->DrawLatex(0.74, 0.92, "model: hh");
+
     canvas->SaveAs(argv[3]);
 }
 

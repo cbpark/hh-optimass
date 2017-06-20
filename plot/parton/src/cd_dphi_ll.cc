@@ -39,6 +39,9 @@ int main(int argc, char *argv[]) {
     hist->Draw("colz");
     cout << "-- Number of events = " << nev << "\n";
 
+    auto info = mkText();
+    info->DrawLatex(0.74, 0.92, "model: hh");
+
     canvas->SaveAs(argv[2]);
 }
 

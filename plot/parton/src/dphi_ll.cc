@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     auto canvas = mkCanvas("canvas", 600);
 
     const auto bin = make_pair(0, TMath::Pi());
-    const double nbin = 50;
+    const double nbin = 40;
 
     // Histogram.
     auto hist_hh = make_shared<TH1D>("hh", "", nbin, bin.first, bin.second);
