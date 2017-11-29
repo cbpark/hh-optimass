@@ -5,7 +5,7 @@
 * C++ compiler supporting C++11 features ([Clang](http://clang.llvm.org/cxx_status.html) >= 3.3, [GCC](https://gcc.gnu.org/projects/cxx-status.html) >= 4.8.1),
 * [colevent](https://github.com/cbpark/colevent),
 * [ROOT](https://root.cern.ch),
-* OptiMass/alm_base.
+* [OptiMass/alm_base](http://hep-pulgrim.ibs.re.kr/optimass/doxygen/index.html).
 
 Adjust `COLEVENT` and `OPTIMASS` to their installation paths in [`Makefile`](Makefile). For instance,
 
